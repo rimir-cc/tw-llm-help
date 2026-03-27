@@ -1,0 +1,61 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.order: 2
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: Architecture
+title: $:/plugins/rimir/llm-help/doc/architecture
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Components
+
+* ''`functions.tid`'' -- shared filter functions for path resolution, child discovery, context filtering. Used by both the tool and the browser UI.
+* ''`tool.tid`'' -- the `llm_help` MCP tool, tagged `$:/tags/rimir/llm-connect/tool`. Renders wikitext pages and lists children.
+* ''`settings.tid`'' -- help browser UI with breadcrumb navigation, content area, child cards, and user shortcut management.
+* ''`styles.tid`'' -- CSS for the browser UI components.
+
+!! Help page tiddler convention
+
+Every help page is a tiddler tagged `$:/tags/rimir/llm-help/page` with fields:
+
+|!Field |!Required |!Description |
+|`llm-help-path` |yes |Space-separated paths (e.g., `data-model/person/create actions/create/person`) |
+|`llm-help-description` |yes |One-line description shown in parent listings |
+|`llm-help-sort` |no |Numeric sort within siblings (default: alphabetical) |
+|`llm-help-context` |no |Space-separated context keys for visibility filtering |
+
+!! Path resolution
+
+Paths are stored in the `llm-help-path` field, not derived from tiddler titles. This allows any plugin to mount content at any path while keeping tiddlers under its own namespace.
+
+Multi-path: A page with `llm-help-path: data-model/person/create actions/create/person` appears at both paths.
+
+!! Child discovery
+
+For a given path, the system:
+
+# Collects all visible pages' paths via `_llm-help-all-paths`
+# Filters to paths starting with `<requested-path>/`
+# Extracts the next path segment after the prefix
+# Deduplicates and sorts
+
+Virtual parent nodes are synthesized automatically when children exist but no explicit page does.
+
+!! Context filtering
+
+Context uses set-intersection: a page is visible if it has no `llm-help-context` (always visible) or if any of its context keys match any of the active context keys.
+
+Active context comes from `$:/config/rimir/llm-help/active-context` (set by the environment, e.g., appify chat panel) or the tool's optional `context` parameter.
+
+!! Dynamic content
+
+All pages are wikitext, rendered at tool-call time via the llm-connect tool executor. Pages can use `$importvariables`, `$list`, `$let`, filters, etc. to read schemas, enumerate instances, or compute anything from the wiki store.
+
+Example: The orga plugin's type pages import `typed/functions.tid` and render the live schema for each type, including field definitions, constraints, and existing instances.
+
+</$fill>
+</$transclude>

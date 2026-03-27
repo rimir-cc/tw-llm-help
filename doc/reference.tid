@@ -1,0 +1,65 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.order: 3
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: Reference
+title: $:/plugins/rimir/llm-help/doc/reference
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Help page fields
+
+|!Field |!Required |!Type |!Description |
+|`llm-help-path` |yes |string |Space-separated list of paths. Each path is `/`-delimited (e.g., `data-model/person/create`). |
+|`llm-help-description` |yes |string |One-line summary shown when this page appears in a parent's subtopic listing. |
+|`llm-help-sort` |no |string |Numeric sort key for ordering among siblings. Pages without sort are ordered alphabetically by path segment. |
+|`llm-help-context` |no |string |Space-separated context keys. If set, page is only visible when active context intersects. If absent, page is always visible. |
+
+!! Tag
+
+All help pages must be tagged: `$:/tags/rimir/llm-help/page`
+
+!! Tool schema
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Help path. Empty for root."
+    },
+    "context": {
+      "type": "string",
+      "description": "Optional context override (space-separated keys)."
+    }
+  }
+}
+```
+
+!! Filter functions (`$:/plugins/rimir/llm-help/functions`)
+
+|!Function |!Parameters |!Returns |
+|`_llm-help-all-pages` |none |All help page tiddler titles |
+|`_llm-help-visible-pages` |`ctx` |Pages visible in given context |
+|`_llm-help-resolve-ctx` |`ctx` |Effective context (param or config tiddler) |
+|`_llm-help-root-page` |`ctx` |Root page tiddler (blank path) |
+|`_llm-help-at` |`path, ctx` |Page tiddler at exact path |
+|`_llm-help-all-paths` |`ctx` |All individual paths from visible pages |
+|`_llm-help-child-segments` |`prefix, ctx` |Unique next-level path segments |
+
+!! Config tiddlers
+
+|!Tiddler |!Purpose |
+|`$:/config/rimir/llm-help/active-context` |Active context keys (space-separated). Set by the environment (e.g., appify chat panel). |
+
+!! User shortcut tiddlers
+
+User-created shortcuts live at `$:/llm-help/user/<slug>` and are tagged `$:/tags/rimir/llm-help/page` with `llm-help-path: shortcuts/<slug>`.
+
+</$fill>
+</$transclude>

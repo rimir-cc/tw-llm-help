@@ -1,0 +1,67 @@
+created: 20260327120000000
+modified: 20260327120000000
+title: $:/plugins/rimir/llm-help/tool
+tags: $:/tags/rimir/llm-connect/tool
+tool-name: llm_help
+tool-description: Browse the hierarchical help system to find wiki-specific documentation. Call with no path to see top-level topics. Call with a path to navigate deeper. Each level returns subtopics with descriptions so you can find the information you need for your current task.
+tool-schema: {"type":"object","properties":{"path":{"type":"string","description":"Help path to navigate. Empty or omitted for root. Use paths from subtopic listings, e.g. 'data-model', 'data-model/person/create'"},"context":{"type":"string","description":"Optional context override (space-separated keys). Usually set automatically by the environment."}},"required":[]}
+tool-mode: read
+type: text/vnd.tiddlywiki
+
+<$importvariables filter="[[$:/plugins/rimir/llm-help/functions]]">
+<$let ctx={{{ [function[_llm-help-resolve-ctx],<context>] }}}
+      requested-path={{{ [<path>else[]] }}}
+>
+<%if [<requested-path>is[blank]] %>
+<$let prefix=""
+      page-tid={{{ [function[_llm-help-visible-pages],<ctx>] :filter[<currentTiddler>get[llm-help-path]is[blank]] +[first[]] }}}
+>
+<%if [<page-tid>minlength[1]] %>
+<$transclude tiddler=<<page-tid>> mode="block"/>
+
+<%endif%>
+Subtopics:
+
+<$list filter="[function[_llm-help-child-segments],[],<ctx>]" variable="segment">
+<$let child-path=<<segment>>
+      child-tid={{{ [function[_llm-help-at],<child-path>,<ctx>] }}}
+      child-desc={{{ [<child-tid>get[llm-help-description]] }}}
+>
+- <$text text=<<segment>>/><%if [<child-desc>minlength[1]] %>: <$text text=<<child-desc>>/><%endif%>
+</$let>
+</$list>
+
+Navigate deeper with llm_help(path), e.g. llm_help("data-model")
+</$let>
+<%else%>
+<$let prefix={{{ [<requested-path>addsuffix[/]] }}}
+      page-tid={{{ [function[_llm-help-at],<requested-path>,<ctx>] }}}
+      has-children={{{ [function[_llm-help-child-segments],<prefix>,<ctx>first[]] }}}
+>
+<%if [<page-tid>minlength[1]] %>
+<$transclude tiddler=<<page-tid>> mode="block"/>
+<%endif%>
+<%if [<has-children>minlength[1]] %>
+
+Subtopics:
+
+<$list filter="[function[_llm-help-child-segments],<prefix>,<ctx>]" variable="segment">
+<$let child-path={{{ [<requested-path>addsuffix[/]addsuffix<segment>] }}}
+      child-tid={{{ [function[_llm-help-at],<child-path>,<ctx>] }}}
+      child-desc={{{ [<child-tid>get[llm-help-description]] }}}
+>
+- <$text text=<<segment>>/><%if [<child-desc>minlength[1]] %>: <$text text=<<child-desc>>/><%endif%>
+</$let>
+</$list>
+
+Navigate deeper with llm_help("<<requested-path>>/subtopic")
+<%endif%>
+<%if [<page-tid>is[blank]] [<has-children>is[blank]] +[count[]match[2]] %>
+No help page found at path: <<requested-path>>
+
+Use llm_help() to see available topics.
+<%endif%>
+</$let>
+<%endif%>
+</$let>
+</$importvariables>

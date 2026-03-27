@@ -1,0 +1,44 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.order: 5
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: Dev-Workflow
+title: $:/plugins/rimir/llm-help/doc/dev-workflow
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Adding help pages from your plugin
+
+# Create `.tid` files under `your-plugin/llm-help/`
+# Tag each with `$:/tags/rimir/llm-help/page`
+# Set `llm-help-path` and `llm-help-description` fields
+# The pages are discovered automatically when the plugin is installed
+
+!! Restart rules
+
+* Help page tiddlers (`.tid` files): ''no restart needed'' — they are shadow tiddlers read from the wiki store
+* The `functions.tid` and `tool.tid` are also shadow tiddlers — ''no restart needed'' for content changes
+* Changes to `settings.tid` (UI): ''no restart needed''
+
+!! Testing help pages
+
+# Start the wiki server
+# Open Settings > LLM Help to browse the help tree
+# Verify your pages appear at the expected paths
+# Check that dynamic content renders correctly
+# Test the `llm_help` tool in a chat session
+
+!! Conventions
+
+* Keep help content concise and LLM-readable — avoid complex wikitext formatting
+* Use `$text` and `$list` widgets for dynamic content (they work in the tool executor's fakeDocument)
+* Don't use `$reveal` or DOM-dependent widgets in help page content
+* Use `$importvariables` to pull in functions from other plugins when needed
+* Put shared procedures in a separate macro tiddler (like `type-info-macro.tid`)
+
+</$fill>
+</$transclude>

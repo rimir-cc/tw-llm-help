@@ -1,0 +1,55 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.hub-category: integration
+rdt.hub-category-name: Integration
+rdt.hub-order: 2
+rdt.order: 1
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: Overview
+title: $:/plugins/rimir/llm-help/doc/overview
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! What it does
+
+llm help provides a self-discoverable, hierarchical documentation system that LLMs navigate via a single MCP tool `llm_help`. Instead of loading all documentation upfront, the LLM browses a tree of help pages level by level, reading only what it needs for the current task.
+
+!! Features
+
+* ''Hierarchical navigation'' -- help pages organized in a tree of any depth, navigated level by level
+* ''Dynamic content'' -- pages are wikitext rendered at call time, pulling live data from the wiki (e.g., typed schemas, existing instances)
+* ''Context-aware'' -- pages can be scoped to specific contexts (e.g., an appify app) via set-intersection filtering
+* ''Multi-path mounting'' -- same page reachable from multiple paths in the tree via space-separated `llm-help-path` values
+* ''Plugin-extensible'' -- any plugin contributes help pages by tagging tiddlers with `$:/tags/rimir/llm-help/page`
+* ''User shortcuts'' -- users add quick-reference help pages via the settings UI for common tasks or failing use cases
+* ''Help browser'' -- settings tab lets users see and navigate the exact same tree the LLM sees
+
+!! Prerequisites
+
+* [[$:/plugins/rimir/llm-connect]] -- provides the MCP tool infrastructure
+* [[$:/plugins/rimir/theme]] -- provides UI styling classes
+
+!! Quick start
+
+# Install the plugin (requires llm-connect and theme)
+# The `llm_help` tool automatically appears in the llm-connect tool list
+# Open Settings > LLM Help to browse the help tree
+# Other plugins (e.g., orga) contribute domain-specific help pages automatically
+
+!! How the LLM uses it
+
+```
+llm_help()                         → see top-level topics
+llm_help("data-model")             → navigate into data model docs
+llm_help("data-model/person")      → read person schema (dynamic)
+llm_help("data-model/person/create") → step-by-step creation guide
+```
+
+Each response includes subtopic listings with descriptions, so the LLM autonomously decides where to navigate based on the task at hand.
+
+</$fill>
+</$transclude>

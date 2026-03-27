@@ -1,0 +1,39 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.order: 6
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: FAQ
+title: $:/plugins/rimir/llm-help/doc/faq
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Can two plugins register pages at the same path?
+
+Yes. The system uses `first[]` — the first tiddler found wins (shadow tiddler ordering is by title). Users can override by creating a non-shadow tiddler with the same tag and path.
+
+!! How does multi-path work?
+
+The `llm-help-path` field accepts space-separated paths. A page with `llm-help-path: a/b c/d` appears as a child of both `a` and `c`. The LLM navigates to either path and sees the same content.
+
+!! What happens when a page has children but no content?
+
+The tool lists the children with their descriptions. A "virtual parent" node is synthesized — no explicit tiddler needed at intermediate levels.
+
+!! How does context filtering work?
+
+Pages with no `llm-help-context` are always visible. Pages with `llm-help-context: appify` are only visible when the active context includes `appify`. The active context is a space-separated list — matching is set intersection (any overlap = visible).
+
+!! Can users edit or override plugin-provided help pages?
+
+Yes. Create a regular tiddler (not shadow) with the same tag and a matching `llm-help-path`. Non-shadow tiddlers take precedence over shadow tiddlers in TiddlyWiki.
+
+!! Why doesn't the root page use `_llm-help-at`?
+
+The root page has an empty `llm-help-path` value. Since `enlist-input[]` on an empty string returns nothing, `_llm-help-at` can't match it. The root is found via `_llm-help-root-page` which checks for blank path directly.
+
+</$fill>
+</$transclude>

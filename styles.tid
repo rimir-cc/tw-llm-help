@@ -1,0 +1,156 @@
+created: 20260327120000000
+modified: 20260327120000000
+title: $:/plugins/rimir/llm-help/styles
+tags: $:/tags/Stylesheet
+type: text/vnd.tiddlywiki
+
+/* Help browser breadcrumbs */
+.llmh-breadcrumbs {
+    padding: 6px 0 10px;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.llmh-breadcrumb-link {
+    color: <<colour tiddler-link-foreground>>;
+    text-decoration: none;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.llmh-breadcrumb-link:hover {
+    background: <<colour tag-background>>;
+}
+
+.llmh-breadcrumb-sep {
+    color: <<colour muted-foreground>>;
+    margin: 0 2px;
+}
+
+/* Content area */
+.llmh-content-area {
+    padding: 12px 16px;
+    margin: 8px 0;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 6px;
+    background: <<colour tiddler-background>>;
+}
+
+/* Children grid */
+.llmh-children-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.llmh-child-card {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 6px;
+    background: <<colour tiddler-background>>;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.llmh-child-card:hover {
+    border-color: <<colour tiddler-link-foreground>>;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.llmh-child-card-title {
+    font-weight: 600;
+    font-size: 0.95em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.llmh-child-card-arrow {
+    color: <<colour muted-foreground>>;
+    font-size: 1.2em;
+}
+
+.llmh-child-card-desc {
+    color: <<colour muted-foreground>>;
+    font-size: 0.85em;
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+/* Stats footer */
+.llmh-stats {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px solid <<colour tiddler-border>>;
+}
+
+/* Shortcut form */
+.llmh-shortcut-form {
+    padding: 12px 16px;
+    margin: 12px 0;
+    border: 1px solid <<colour tiddler-border>>;
+    border-radius: 6px;
+    background: <<colour tiddler-background>>;
+}
+
+.llmh-shortcut-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.85em;
+    margin: 8px 0 2px;
+    color: <<colour muted-foreground>>;
+}
+
+.llmh-shortcut-form label:first-child {
+    margin-top: 0;
+}
+
+.llmh-shortcut-form input,
+.llmh-shortcut-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.llmh-shortcut-form textarea {
+    min-height: 80px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.llmh-shortcut-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+/* Shortcut list */
+.llmh-shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid <<colour tiddler-border>>;
+}
+
+.llmh-shortcut-item:last-child {
+    border-bottom: none;
+}
+
+.llmh-shortcut-item-path {
+    font-family: monospace;
+    font-size: 0.85em;
+    min-width: 140px;
+}
+
+.llmh-shortcut-item-desc {
+    flex: 1;
+    color: <<colour muted-foreground>>;
+    font-size: 0.85em;
+}

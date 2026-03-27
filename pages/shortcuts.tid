@@ -1,0 +1,12 @@
+created: 20260327120000000
+modified: 20260327120000000
+title: $:/plugins/rimir/llm-help/pages/shortcuts
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: shortcuts
+llm-help-description: User-defined quick-reference guides and use-case descriptions
+llm-help-sort: 90
+type: text/vnd.tiddlywiki
+
+User Shortcuts
+
+This section contains user-defined quick-reference guides. These are custom help pages added by the wiki owner to provide shortcuts for common tasks or to guide the LLM through specific use cases.

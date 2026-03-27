@@ -1,0 +1,7 @@
+created: 20260327120000000
+modified: 20260327120000000
+title: $:/plugins/rimir/llm-help/changelog
+type: text/vnd.tiddlywiki
+
+|!Version |!Date |!Changes |
+|0.1.0 |2026-03-27 |Initial release: core help system with llm_help tool, help browser UI, user shortcuts |

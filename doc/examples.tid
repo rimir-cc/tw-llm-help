@@ -1,0 +1,83 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.order: 4
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: Examples
+title: $:/plugins/rimir/llm-help/doc/examples
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Creating a help page (static)
+
+```
+title: $:/plugins/rimir/my-plugin/llm-help/my-topic
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: my-plugin/my-topic
+llm-help-description: Description shown in parent listings
+type: text/vnd.tiddlywiki
+
+Content the LLM will read when it navigates to this path.
+```
+
+!! Multi-path page
+
+Mount the same content at two paths:
+
+```
+llm-help-path: data-model/person/create actions/create/person
+```
+
+The LLM reaches this page whether it navigates via `data-model` or `actions/create`.
+
+!! Dynamic page (reading typed schema)
+
+```
+title: $:/plugins/rimir/orga/llm-help/type-person
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: data-model/person
+llm-help-description: Person type — fields, constraints, creation, search
+type: text/vnd.tiddlywiki
+
+<$importvariables filter="[[$:/plugins/rimir/orga/llm-help/type-info-macro]]">
+<<render-type-info "person">>
+</$importvariables>
+```
+
+The macro reads the typed plugin's schema definitions and renders field info dynamically.
+
+!! Context-restricted page
+
+Only visible when the active context includes `appify`:
+
+```
+llm-help-context: appify
+```
+
+Only visible in a specific app:
+
+```
+llm-help-context: orga-view
+```
+
+!! User shortcut
+
+Created via the settings UI or manually:
+
+```
+title: $:/llm-help/user/create-person-shortcut
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: shortcuts/create-person
+llm-help-description: Quick guide to creating a person
+type: text/vnd.tiddlywiki
+
+1. Find the parent org: search_tiddlers with rrt.type=orga
+2. Create person: create_tiddler with basetitle=<org>/pn:<abbrev>
+3. Set fields: caption, abbrev, parent, status
+```
+
+</$fill>
+</$transclude>

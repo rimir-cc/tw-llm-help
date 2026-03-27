@@ -1,0 +1,46 @@
+created: 20260327120000000
+modified: 20260327120000000
+rdt.order: 7
+rdt.plugin-key: llm-help
+rdt.plugin-name: llm help
+rdt.plugin-subtitle: Self-discoverable hierarchical help system for LLM interactions
+rdt.section: Tw-Internals
+title: $:/plugins/rimir/llm-help/doc/tw-internals
+type: text/vnd.tiddlywiki
+
+<$transclude $tiddler="$:/plugins/rimir/doc-template/templates/page">
+<$fill $name="body">
+
+!! Shadow tiddler discovery
+
+Help pages from plugins are shadow tiddlers. The discovery filter `[all[shadows+tiddlers]tag[...]]` finds both shadow and regular tiddlers. Regular tiddlers (user overrides) take precedence over shadows with the same title.
+
+!! Filter function mechanics
+
+Functions defined with `\function` are stored as tiddler text and evaluated via `[function[name],<arg1>,<arg2>]`. The llm-help functions chain multiple filter runs:
+
+* `:filter[subfilter]` — keeps items where the subfilter returns non-empty output. Inside the subfilter, `<currentTiddler>` refers to each item being tested.
+* Multiple `[runs]` inside `:filter[...]` are unioned — used for OR logic (e.g., blank context OR matching context).
+* `+[unique[sort[]]]` — deduplicates and sorts the accumulated output.
+
+!! `enlist-input[]` for multi-value fields
+
+The `llm-help-path` field contains space-separated paths. The operator chain `get[llm-help-path]enlist-input[]` first reads the raw field value, then splits it into individual items. This is how multi-path mounting works — each path becomes a separate item in the filter pipeline.
+
+!! Tool execution context
+
+The `llm_help` tool runs inside llm-connect's tool executor (`tool-executor.js`), which:
+
+* Renders the tool's wikitext body via `$tw.wiki.makeWidget()` with `$tw.fakeDocument`
+* Injects tool input parameters as widget variables (e.g., `path`, `context`)
+* Collects the rendered text output (strips HTML tags)
+* Truncates at `max-tool-result-length` (default 4000 chars)
+
+This means help page content must use server-compatible widgets (`$list`, `$let`, `$text`, `$importvariables`, `<%if%>`). DOM-dependent widgets (`$reveal` with animations, `$scrollable`) won't work.
+
+!! `$importvariables` for cross-plugin functions
+
+Dynamic help pages use `<$importvariables filter="[[$:/plugins/rimir/typed/functions]]">` to pull in filter functions from other plugins. This is necessary because `\import` only accepts literal tiddler references, not computed filters. Despite being deprecated, `$importvariables` remains the only way to dynamically scope functions at render time.
+
+</$fill>
+</$transclude>
