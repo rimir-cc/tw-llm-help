@@ -73,10 +73,11 @@ No help page found at this path.
 
 </$let>
 
-<$let page-count={{{ [function[_llm-help-all-pages]count[]] }}}>
+<$let page-count={{{ [function[_llm-help-all-pages]count[]] }}}
+  active-ctx={{{ [{$:/temp/rimir/llm-help/active-context}] }}}
+>
 <div class="llmh-stats rr-muted rr-small">
-<<page-count>> help pages registered
-<%if [<ctx>minlength[1]] %> | Active context: <code><$text text=<<ctx>>/></code><%endif%>
+<<page-count>> help pages registered | Active context: <%if [<active-ctx>minlength[1]] %><code><$text text=<<active-ctx>>/></code><%else%><em>none</em><%endif%>
 </div>
 </$let>
 
