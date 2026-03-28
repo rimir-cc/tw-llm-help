@@ -4,4 +4,5 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.1 |2026-03-28 |Fix filter functions: single-line \function pragmas, avoid :filter with negation operators, use :map for per-item segment extraction. Fix settings UI: inline actions for card navigation, HTML for block-level headings. Fix root page detection via !has[llm-help-path]. |
 |0.1.0 |2026-03-27 |Initial release: core help system with llm_help tool, help browser UI, user shortcuts |

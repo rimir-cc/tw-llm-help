@@ -3,19 +3,17 @@ modified: 20260327120000000
 title: $:/plugins/rimir/llm-help/settings
 type: text/vnd.tiddlywiki
 
-<$importvariables filter="[[$:/plugins/rimir/llm-help/functions]]">
-
-\procedure navigate-to(new-path)
-<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/path" text=<<new-path>>/>
-\end
-
 \procedure render-breadcrumbs()
 <div class="llmh-breadcrumbs">
-<$button class="tc-btn-invisible llmh-breadcrumb-link" actions=<<navigate-to "">>>Root</$button><%if [{$:/state/rimir/llm-help/browser/path}minlength[1]] %>
+<$button class="tc-btn-invisible llmh-breadcrumb-link">
+<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/path" text=""/>
+Root
+</$button><%if [{$:/state/rimir/llm-help/browser/path}minlength[1]] %>
 <$list filter="[{$:/state/rimir/llm-help/browser/path}splitregexp[/]!is[blank]butlast[]]" variable="segment" counter="idx">
 <span class="llmh-breadcrumb-sep">&#x203a;</span>
 <$let parts={{{ [{$:/state/rimir/llm-help/browser/path}splitregexp[/]!is[blank]first<idx>join[/]] }}}>
-<$button class="tc-btn-invisible llmh-breadcrumb-link" actions=<<navigate-to parts>>>
+<$button class="tc-btn-invisible llmh-breadcrumb-link">
+<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/path" text=<<parts>>/>
 <$text text=<<segment>>/>
 </$button>
 </$let>
@@ -28,20 +26,18 @@ type: text/vnd.tiddlywiki
 </div>
 \end
 
+<$importvariables filter="[[$:/plugins/rimir/llm-help/functions]]">
 <$let
   browser-path={{{ [{$:/state/rimir/llm-help/browser/path}else[]] }}}
   ctx={{{ [function[_llm-help-resolve-ctx]] }}}
->
-
-<<render-breadcrumbs>>
-
-<$let
   root-page={{{ [function[_llm-help-root-page],<ctx>] }}}
   found-page={{{ [function[_llm-help-at],<browser-path>,<ctx>] }}}
   page-tid={{{ [<browser-path>is[blank]then<root-page>] ~[<found-page>] }}}
   prefix={{{ [<browser-path>is[blank]then[]] ~[<browser-path>addsuffix[/]] }}}
   child-segs={{{ [function[_llm-help-child-segments],<prefix>,<ctx>] }}}
 >
+
+<<render-breadcrumbs>>
 
 <%if [<page-tid>minlength[1]] %>
 <div class="llmh-content-area">
@@ -57,9 +53,10 @@ type: text/vnd.tiddlywiki
   child-tid={{{ [function[_llm-help-at],<child-path>,<ctx>] }}}
   child-desc={{{ [<child-tid>get[llm-help-description]] }}}
   sub-prefix={{{ [<child-path>addsuffix[/]] }}}
-  has-sub-children={{{ [function[_llm-help-child-segments],<sub-prefix>,<ctx>first[]] }}}
+  has-sub-children={{{ [function[_llm-help-child-segments],<sub-prefix>,<ctx>first[1]] }}}
 >
-<$button class="tc-btn-invisible llmh-child-card" actions=<<navigate-to child-path>>>
+<$button class="tc-btn-invisible llmh-child-card">
+<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/path" text=<<child-path>>/>
 <div class="llmh-child-card-title"><$text text=<<segment>>/> <%if [<has-sub-children>minlength[1]] %><span class="llmh-child-card-arrow">&#x203a;</span><%endif%></div>
 <%if [<child-desc>minlength[1]] %><div class="llmh-child-card-desc"><$text text=<<child-desc>>/></div><%endif%>
 </$button>
@@ -83,12 +80,10 @@ No help page found at this path.
 </div>
 </$let>
 
----
-
-!! User Shortcuts
-
+<div style="border-top: 1px solid #ddd; margin-top: 16px; padding-top: 12px;">
+<h2>User Shortcuts</h2>
 <div class="rr-muted rr-small">
-Add quick-reference help pages for common tasks or use cases. These are visible to the LLM under the `shortcuts/` path.
+Add quick-reference help pages for common tasks or use cases. These are visible to the LLM under the <code>shortcuts/</code> path.
 </div>
 
 <$reveal stateTitle="$:/state/rimir/llm-help/shortcut-form" type="match" text="open">
@@ -116,7 +111,7 @@ Add quick-reference help pages for common tasks or use cases. These are visible 
 <$action-setfield $tiddler="$:/temp/rimir/llm-help/new-shortcut" slug="" description="" extra-paths="" content=""/>
 Create shortcut
 </$button>
-<$button class="tc-btn-invisible" actions={{{ [[$:/state/rimir/llm-help/shortcut-form]action-setfield[text],[closed]] }}}>
+<$button class="tc-btn-invisible">
 <$action-setfield $tiddler="$:/state/rimir/llm-help/shortcut-form" text="closed"/>
 Cancel
 </$button>
@@ -132,11 +127,13 @@ Cancel
 <div class="llmh-shortcut-item">
 <span class="llmh-shortcut-item-path"><$text text={{{ [<currentTiddler>get[llm-help-path]enlist-input[]first[]] }}}/></span>
 <span class="llmh-shortcut-item-desc"><$text text={{{ [<currentTiddler>get[llm-help-description]] }}}/></span>
-<$button class="tc-btn-invisible tc-tiddlylink" actions=<<navigate-to {{{ [<currentTiddler>get[llm-help-path]enlist-input[]first[]] }}}>>>Browse</$button>
+<$button class="tc-btn-invisible tc-tiddlylink">
+<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/path" text={{{ [<currentTiddler>get[llm-help-path]enlist-input[]first[]] }}}/>
+Browse
+</$button>
 <$button class="tc-btn-invisible" message="tm-delete-tiddler" param=<<currentTiddler>>>Delete</$button>
 </div>
 </$list>
-
-</$let>
+</div>
 
 </$importvariables>

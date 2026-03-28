@@ -4,21 +4,9 @@ title: $:/plugins/rimir/llm-help/functions
 type: text/vnd.tiddlywiki
 
 \function _llm-help-all-pages() [all[shadows+tiddlers]tag[$:/tags/rimir/llm-help/page]]
-
-\function _llm-help-visible-pages(ctx)
-  [function[_llm-help-all-pages]] :filter[ [<currentTiddler>get[llm-help-context]is[blank]] [<currentTiddler>get[llm-help-context]enlist-input[]match<ctx>] ]
-
-\function _llm-help-resolve-ctx(ctx)
-  [<ctx>minlength[1]] ~[{$:/config/rimir/llm-help/active-context}]
-
-\function _llm-help-root-page(ctx)
-  [function[_llm-help-visible-pages],<ctx>] :filter[<currentTiddler>get[llm-help-path]is[blank]] +[first[]]
-
-\function _llm-help-at(path, ctx)
-  [function[_llm-help-visible-pages],<ctx>] :filter[<currentTiddler>get[llm-help-path]enlist-input[]match<path>] +[first[]]
-
-\function _llm-help-all-paths(ctx)
-  [function[_llm-help-visible-pages],<ctx>get[llm-help-path]enlist-input[]]
-
-\function _llm-help-child-segments(prefix, ctx)
-  [function[_llm-help-all-paths],<ctx>prefix<prefix>removeprefix<prefix>splitregexp[/]first[]!is[blank]] +[unique[sort[]]]
+\function _llm-help-visible-pages(ctx) [function[_llm-help-all-pages]!has[llm-help-context]] [function[_llm-help-all-pages]has[llm-help-context]search:llm-help-context<ctx>]
+\function _llm-help-resolve-ctx(ctx) [<ctx>minlength[1]] ~[{$:/config/rimir/llm-help/active-context}]
+\function _llm-help-root-page(ctx) [function[_llm-help-visible-pages],<ctx>!has[llm-help-path]] +[first[]]
+\function _llm-help-at(path, ctx) [function[_llm-help-visible-pages],<ctx>]:filter[<currentTiddler>get[llm-help-path]enlist-input[]match<path>] +[first[]]
+\function _llm-help-all-paths(ctx) [function[_llm-help-visible-pages],<ctx>get[llm-help-path]enlist-input[]]
+\function _llm-help-child-segments(prefix, ctx) [function[_llm-help-all-paths],<ctx>prefix<prefix>removeprefix<prefix>] :map[<currentTiddler>split[/]first[]] +[!is[blank]unique[]sort[]]
