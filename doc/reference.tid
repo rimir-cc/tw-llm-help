@@ -46,16 +46,16 @@ All help pages must be tagged: `$:/tags/rimir/llm-help/page`
 |!Function |!Parameters |!Returns |
 |`_llm-help-all-pages` |none |All help page tiddler titles |
 |`_llm-help-visible-pages` |`ctx` |Pages visible in given context |
-|`_llm-help-resolve-ctx` |`ctx` |Effective context (param or config tiddler) |
+|`_llm-help-resolve-ctx` |`ctx` |Effective context (param or state tiddler) |
 |`_llm-help-root-page` |`ctx` |Root page tiddler (blank path) |
 |`_llm-help-at` |`path, ctx` |Page tiddler at exact path |
 |`_llm-help-all-paths` |`ctx` |All individual paths from visible pages |
 |`_llm-help-child-segments` |`prefix, ctx` |Unique next-level path segments |
 
-!! Config tiddlers
+!! State tiddlers
 
 |!Tiddler |!Purpose |
-|`$:/config/rimir/llm-help/active-context` |Active context keys (space-separated). Set by the environment (e.g., appify chat panel). |
+|`$:/temp/rimir/llm-help/active-context` |Active context keys (space-separated). Transient — resets on reload. Set by the environment (e.g., appify sets it when an app becomes active). |
 
 !! User shortcut tiddlers
 

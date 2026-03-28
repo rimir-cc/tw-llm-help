@@ -49,7 +49,7 @@ Virtual parent nodes are synthesized automatically when children exist but no ex
 
 Context uses set-intersection: a page is visible if it has no `llm-help-context` (always visible) or if any of its context keys match any of the active context keys.
 
-Active context comes from `$:/config/rimir/llm-help/active-context` (set by the environment, e.g., appify chat panel) or the tool's optional `context` parameter.
+Active context comes from `$:/temp/rimir/llm-help/active-context` (set by the environment, e.g., appify sets it when an app becomes active) or the tool's optional `context` parameter. Uses `$:/temp/` so it resets on reload — correct because context reflects what's active right now, not a permanent preference.
 
 !! Dynamic content
 
