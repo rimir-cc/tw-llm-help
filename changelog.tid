@@ -4,6 +4,7 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.10 |2026-03-29 |Add conditional filter operators gotcha to tw-gotchas/filter-runs — build filter strings dynamically with $let instead of duplicating $list blocks |
 |0.1.9 |2026-03-29 |Add nested {{{ }}} gotcha to tw-gotchas/wikitext — filter expressions cannot nest |
 |0.1.8 |2026-03-29 |Add tw-gotchas/filter-runs page: ~ else semantics, + pipe vs union, :filter scope across runs, interleaving limitations |
 |0.1.7 |2026-03-29 |Add tw-gotchas help pages: titles/brackets, filters, wikitext, shadows, slots — always available (no context) |
