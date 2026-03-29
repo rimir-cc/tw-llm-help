@@ -120,3 +120,24 @@ Read-only rendering (not actions) works fine with `<%if%>`.
 ```
 
 Rule: If you need a computed value inside a filter, break it into a `$let` chain. Each `{{{...}}}` must be a standalone, non-nested expression.
+
+---
+
+8. `{{{ }}}` only works in widget attributes — not in `<<procedure>>` calls
+
+Filtered transclusion `{{{...}}}` is valid inside widget attributes like `<$widget attr={{{ filter }}}/>`. It does NOT work as an argument to a `<<procedure>>` macro-style call.
+
+```
+<!-- BROKEN — {{{ }}} is not evaluated in procedure calls -->
+<<my-procedure arg:{{{ [<x>get[field]] }}}>>
+
+<!-- CORRECT — use $transclude to call the procedure with computed args -->
+<$transclude $variable="my-procedure" arg={{{ [<x>get[field]] }}}/>
+
+<!-- CORRECT — or pre-compute with $let -->
+<$let val={{{ [<x>get[field]] }}}>
+<<my-procedure arg:<<val>>>>
+</$let>
+```
+
+Rule: `<<procedure>>` calls only accept literal values and `<<variable>>` references. For computed arguments, always use `<$transclude $variable="name" arg={{{ filter }}}/>` instead.
