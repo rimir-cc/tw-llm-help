@@ -99,3 +99,24 @@ Action widgets inside `<%else%>` branches are NOT reachable by `Widget.invokeAct
 ```
 
 Read-only rendering (not actions) works fine with `<%if%>`.
+
+---
+
+7. Nested `{{{ }}}` is invalid — filter expressions cannot nest
+
+`{{{...}}}` (filtered transclusion) cannot contain another `{{{...}}}`. The inner triple braces are not evaluated — they become literal text, producing broken output.
+
+```
+<!-- BROKEN — inner {{{...}}} is literal text -->
+<$button class={{{ [[prefix-]addsuffix{{{ [<x>match[y]then[active]] }}}] }}}>
+
+<!-- CORRECT — use $let to pre-compute the inner value -->
+<$let suffix={{{[<x>match[y]then[active]]}}} cls={{{[[prefix-]addsuffix<suffix>]}}}>
+<$button class=<<cls>>>
+</$let>
+
+<!-- CORRECT — combine into one filter expression -->
+<$button class={{{ [<x>match[y]then[prefix-active]else[prefix-]] }}}>
+```
+
+Rule: If you need a computed value inside a filter, break it into a `$let` chain. Each `{{{...}}}` must be a standalone, non-nested expression.
