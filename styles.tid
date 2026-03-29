@@ -91,6 +91,36 @@ type: text/vnd.tiddlywiki
     border-top: 1px solid <<colour tiddler-border>>;
 }
 
+/* Context popup */
+.llmh-ctx-toggle-btn {
+    font-size: inherit;
+    padding: 0 4px;
+}
+
+.llmh-ctx-popup {
+    min-width: 200px;
+    padding: 8px 0;
+}
+
+.llmh-ctx-popup-header {
+    padding: 2px 12px 6px;
+    font-weight: 600;
+}
+
+.llmh-ctx-option {
+    padding: 3px 12px;
+}
+
+.llmh-ctx-option label {
+    cursor: pointer;
+}
+
+.llmh-ctx-clear {
+    border-top: 1px solid <<colour tiddler-border>>;
+    margin-top: 4px;
+    padding-top: 6px;
+}
+
 /* Shortcut form */
 .llmh-shortcut-form {
     padding: 12px 16px;

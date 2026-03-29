@@ -75,10 +75,38 @@ No help page found at this path.
 
 <$let page-count={{{ [function[_llm-help-all-pages]count[]] }}}
   active-ctx={{{ [{$:/temp/rimir/llm-help/active-context}] }}}
+  all-ctx-keys={{{ [function[_llm-help-all-context-keys]] }}}
 >
 <div class="llmh-stats rr-muted rr-small">
 <<page-count>> help pages registered | Active context: <%if [<active-ctx>minlength[1]] %><code><$text text=<<active-ctx>>/></code><%else%><em>none</em><%endif%>
+<%if [<all-ctx-keys>minlength[1]] %>
+ | <$button popup="$:/state/rimir/llm-help/ctx-popup" class="tc-btn-invisible tc-tiddlylink llmh-ctx-toggle-btn">select &#x25BE;</$button>
+<%endif%>
 </div>
+<%if [<all-ctx-keys>minlength[1]] %>
+<$reveal stateTitle="$:/state/rimir/llm-help/ctx-popup" type="popup" position="above" animate="yes" class="tc-drop-down llmh-ctx-popup">
+<div class="llmh-ctx-popup-header rr-muted rr-small">Toggle context keys:</div>
+<$list filter="[function[_llm-help-all-context-keys]]" variable="ctx-key">
+<$let is-active={{{ [{$:/temp/rimir/llm-help/active-context}enlist-input[]match<ctx-key>] }}}
+  ctx-page-count={{{ [function[_llm-help-all-pages]has[llm-help-context]] :filter[get[llm-help-context]enlist-input[]match<ctx-key>] +[count[]] }}}
+>
+<div class="llmh-ctx-option">
+<$checkbox tiddler="$:/temp/rimir/llm-help/active-context" listField="text" checked=<<ctx-key>> unchecked="" default="">
+<$text text=<<ctx-key>>/> <span class="rr-muted rr-small">(<$text text=<<ctx-page-count>>/> pages)</span>
+</$checkbox>
+</div>
+</$let>
+</$list>
+<%if [<active-ctx>minlength[1]] %>
+<div class="llmh-ctx-option llmh-ctx-clear">
+<$button class="tc-btn-invisible tc-tiddlylink">
+<$action-setfield $tiddler="$:/temp/rimir/llm-help/active-context" text=""/>
+Clear all
+</$button>
+</div>
+<%endif%>
+</$reveal>
+<%endif%>
 </$let>
 
 <div style="border-top: 1px solid #ddd; margin-top: 16px; padding-top: 12px;">

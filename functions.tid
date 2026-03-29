@@ -11,3 +11,4 @@ type: text/vnd.tiddlywiki
 \function _llm-help-at(path, ctx) [function[_llm-help-visible-pages],<ctx>]:filter[<currentTiddler>get[llm-help-path]enlist-input[]match<path>] +[first[]]
 \function _llm-help-all-paths(ctx) [function[_llm-help-visible-pages],<ctx>get[llm-help-path]enlist-input[]]
 \function _llm-help-child-segments(prefix, ctx) [function[_llm-help-all-paths],<ctx>prefix<prefix>removeprefix<prefix>] :map[<currentTiddler>split[/]first[]] +[!is[blank]unique[]sort[]]
+\function _llm-help-all-context-keys() [function[_llm-help-all-pages]get[llm-help-context]enlist-input[]] +[unique[]sort[]]

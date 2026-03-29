@@ -20,6 +20,7 @@ Each level returns child topics with descriptions, so the LLM decides where to g
 - **Multi-path mounting** — same page reachable from multiple paths in the tree
 - **Plugin-extensible** — any plugin can contribute help pages via tagged tiddlers
 - **User shortcuts** — users can add quick-reference help pages via the settings UI
+- **Context selector** — settings popup to toggle active context keys with page counts
 - **Help browser** — settings tab lets users see and navigate what the LLM sees
 
 ## For plugin authors
