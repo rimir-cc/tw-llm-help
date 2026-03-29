@@ -15,8 +15,9 @@ Categories:
 
 - **titles** — Tiddler titles with spaces, double-bracket syntax, list fields
 - **filters** — Filter expression pitfalls (short-circuit, `:filter`, chaining, variables)
+- **filter-runs** — How `~`, `+`, `:filter`, `:map` interact across runs (else, pipe, scope, interleaving)
 - **wikitext** — Markup gotchas (`$reveal`, `code-body`, comments, `$let` vs `$set`)
 - **shadows** — Shadow tiddler discovery (`[all[tiddlers+shadows]...]`)
 - **slots** — `$slot`/`$fill` scope limitations, naming restrictions
 
-Navigate deeper: llm_help("tw-gotchas/titles"), llm_help("tw-gotchas/filters"), llm_help("tw-gotchas/wikitext"), llm_help("tw-gotchas/shadows"), llm_help("tw-gotchas/slots")
+Navigate deeper: llm_help("tw-gotchas/titles"), llm_help("tw-gotchas/filters"), llm_help("tw-gotchas/filter-runs"), llm_help("tw-gotchas/wikitext"), llm_help("tw-gotchas/shadows"), llm_help("tw-gotchas/slots")

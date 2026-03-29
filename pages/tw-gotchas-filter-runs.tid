@@ -1,0 +1,121 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-filter-runs
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/filter-runs
+llm-help-description: Filter run composition — how ~, +, :filter, and space-separated runs interact (else, pipe, scope, interleaving)
+llm-help-sort: 06
+type: text/vnd.tiddlywiki
+
+Filter Run Composition Gotchas
+
+These gotchas are about how multiple filter runs interact. Understanding `~`, `+`, `:filter` scope, and space-separated runs is critical for building dynamic lists.
+
+---
+
+1. `~` (else) only fires on truly empty output — not on "0" or falsy values
+
+The `~` prefix means "use this run only if ALL previous runs produced no output at all". It does NOT check for "0", empty strings, or falsy values — only for zero items in the result set.
+
+`+[count[]]` ALWAYS produces output (the string `"0"` or `"5"` etc.), so `~` after it NEVER fires.
+
+```
+<!-- BROKEN — count[] returns "0" (a string), so ~ never fires -->
+[rrt.type[project]status[active]] +[count[]] ~[[0]]
+
+<!-- BROKEN — same problem, "0" is output, not empty -->
+[rrt.type[project]status[planned]] +[count[]] ~[<fallback>]
+
+<!-- CORRECT — test count with match[] instead of ~ -->
+<$let total={{{[rrt.type[project]status[active]count[]]}}}>
+<%if [<total>match[0]]%>No projects found.<%endif%>
+</$let>
+
+<!-- CORRECT — use $list with emptyMessage -->
+<$list filter="[rrt.type[project]status[active]]"
+  emptyMessage="No projects found.">
+  ...
+</$list>
+```
+
+Rule: Never use `~` after `+[count[]]`. Use `$list emptyMessage` or `$let` + `<%if%>` for empty-state handling.
+
+---
+
+2. `:filter` applies to ALL accumulated items, not just the last run
+
+When you have multiple space-separated runs followed by `:filter`, the filter applies to every item accumulated so far — including items from earlier runs.
+
+```
+<!-- BROKEN — :filter also tests "sec:osaca" which has no status field -->
+[[sec:osaca]] [rrt.type[project]field:parent[work/mgm/osaca]] :filter[<currentTiddler>get[status]match[active]]
+<!-- Result: sec:osaca is filtered OUT because get[status] returns nothing for it -->
+
+<!-- CORRECT — filter before merging -->
+<$let filtered-projects={{{[rrt.type[project]field:parent[work/mgm/osaca]status[active]join[ ]]}}}>
+  [[sec:osaca]] [enlist<filtered-projects>]
+</$let>
+
+<!-- CORRECT — apply :filter only to the run that needs it -->
+[rrt.type[project]field:parent[work/mgm/osaca]status[active]]
+<!-- then prepend the header separately in wikitext -->
+```
+
+Rule: `:filter`, `:map`, `:sort`, `:reduce` are run-level operations that act on the ENTIRE accumulated result set. If you need to filter only some items, do it within a single run's operators or pre-compute with `$let`.
+
+---
+
+3. `+` replaces input — it does NOT append
+
+The `+` prefix takes the accumulated results as input to the new run and replaces the output. It is a pipe, not a union.
+
+```
+<!-- BROKEN — + replaces the header with project results -->
+[[sec:osaca]] +[rrt.type[project]field:parent[work/mgm/osaca]]
+<!-- Result: only projects, header is gone -->
+
+<!-- CORRECT — space-separated runs accumulate (union) -->
+[[sec:osaca]] [rrt.type[project]field:parent[work/mgm/osaca]]
+<!-- Result: sec:osaca, project1, project2, ... -->
+```
+
+Run prefix cheat sheet:
+- `[run]` or `[run]` (space-separated) — UNION: adds results to the output
+- `+[run]` — PIPE: takes accumulated output as input, replaces output with result
+- `-[run]` — SUBTRACT: removes results of this run from accumulated output
+- `~[run]` — ELSE: only runs if all previous output is empty
+- `:filter[run]` — FILTER: keeps only items where the sub-filter produces output
+- `:map[run]` — MAP: transforms each item, replacing it with the sub-filter result
+
+---
+
+4. Interleaving items from different sources requires wikitext, not filters
+
+Building a flat list like `section1 item1 item2 section2 item3` where sections and items come from different queries is extremely difficult in a single filter expression. Filters are good at flat lists from one source — not at interleaving.
+
+```
+<!-- ANTI-PATTERN — trying to build section+items in one filter -->
+[rrt.type[project]each[parent]get[parent]] :map[
+  <currentTiddler>addprefix[sec:] ...somehow append children...
+]
+<!-- This doesn't work — :map returns one item per input item -->
+
+<!-- CORRECT — use nested $list widgets -->
+<$list filter="[rrt.type[project]each[parent]get[parent]sort[]]" variable="parent">
+  <div class="section-header">
+    <$text text={{{[<parent>split[/]last[]]}}}/>
+  </div>
+  <$list filter="[rrt.type[project]field:parent<parent>status<status-filter>sort[caption]]" variable="proj">
+    <div class="project-item">{{!!caption}}</div>
+  </$list>
+</$list>
+
+<!-- CORRECT — if you must use vtabs, pre-build the element list with $vars -->
+<$vars elements={{{
+  [[sec:group1]] [source1[group1]] [[sec:group2]] [source2[group2]] +[join[ ]]
+}}}>
+  <$transclude $tiddler="$:/plugins/rimir/components/vtabs" elements=<<elements>> .../>
+</$vars>
+```
+
+Rule: When you need structured/grouped output, use `$list` nesting in wikitext. Reserve single filter expressions for flat, homogeneous lists.
