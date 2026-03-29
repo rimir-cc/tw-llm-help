@@ -51,10 +51,10 @@ The macro reads the typed plugin's schema definitions and renders field info dyn
 
 !! Context-restricted page
 
-Only visible when the active context includes `appify`:
+Only visible when the active context includes `rimir/appify`:
 
 ```
-llm-help-context: appify
+llm-help-context: rimir/appify
 ```
 
 Only visible in a specific app:

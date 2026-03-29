@@ -25,7 +25,7 @@ The tool lists the children with their descriptions. A "virtual parent" node is 
 
 !! How does context filtering work?
 
-Pages with no `llm-help-context` are always visible. Pages with `llm-help-context: appify` are only visible when the active context includes `appify`. The active context is a space-separated list — matching is set intersection (any overlap = visible).
+Pages with no `llm-help-context` are always visible. Pages with `llm-help-context: rimir/appify` are only visible when the active context includes `rimir/appify`. The active context is a space-separated list — matching is set intersection (any overlap = visible).
 
 !! Can users edit or override plugin-provided help pages?
 
