@@ -1,0 +1,101 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-wikitext
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/wikitext
+llm-help-description: Wikitext markup pitfalls — $reveal fragmentation, code-body, comments, $let vs $set, p-wrapping
+llm-help-sort: 03
+type: text/vnd.tiddlywiki
+
+Wikitext Gotchas
+
+1. `$reveal` cannot fragment HTML structure
+
+`$reveal` renders as a widget node. You CANNOT use it to conditionally open/close HTML tags across boundaries — TW's widget tree doesn't support loose closing/opening tags inside widget bodies.
+
+```
+<!-- BROKEN — renders literal </div><div> text -->
+<$reveal type="match" state="..." text="split">
+<div class="pane">
+</$reveal>
+
+<!-- CORRECT — use CSS class toggle -->
+<$let layoutClass={{{[[$:/state/layout]get[text]match[split]then[split-class]]}}}>
+<div class=<<layoutClass>>>
+  <div class="pane-a">...content...</div>
+  <div class="pane-b">...content...</div>
+</div>
+</$let>
+```
+
+Key principle: Always keep HTML structure intact within a single widget scope. Use CSS classes to change layout modes.
+
+---
+
+2. `code-body: yes` disables pragma parsing
+
+With `code-body: yes`, TW treats the entire body as literal content — `\import`, `\procedure`, `\function` at the top are NOT parsed as pragmas. They become visible text.
+
+- **Use `code-body: yes`** for tiddlers with NO pragmas (simple templates, pure HTML/wikitext)
+- **Omit `code-body: yes`** if the tiddler uses `\import`, `\procedure`, `\function`, or any pragma
+
+Symptom: headings render as literal `!! Title` because a preceding `\import` wasn't consumed as a pragma.
+
+---
+
+3. `<%-- --%>` is NOT a valid comment
+
+TW has NO wikitext comment syntax `<%-- ... --%>`. This renders as literal text. The `<%if%>` / `<%else%>` / `<%endif%>` conditional syntax exists, but there is no comment variant.
+
+```
+<!-- BROKEN — renders as visible text -->
+<%-- this is not a comment --%>
+
+<!-- CORRECT — use HTML comments -->
+<!-- this is a comment -->
+```
+
+---
+
+4. Use `$let` instead of nested `$set`
+
+`$let` is more efficient (no tiddler context creation) and supports multiple variables:
+
+```
+<!-- Anti-pattern -->
+<$set name="a" value="1"><$set name="b" value="2">...</$set></$set>
+
+<!-- Better -->
+<$let a="1" b="2">...</$let>
+```
+
+`$set` is still needed for: `filter` attribute (computed value), `select` attribute, `tiddler`/`subtiddler` context.
+
+---
+
+5. TW wraps inline wikitext in `<p>` tags
+
+When wikitext content isn't in block mode, TW wraps it in `<p>`. This matters for test comparisons and layout. Use `$mode="block"` on `$transclude` when you need block-level rendering without `<p>` wrappers.
+
+---
+
+6. `<%if%>`/`<%else%>` + `invokeActions` bug
+
+Action widgets inside `<%else%>` branches are NOT reachable by `Widget.invokeActions()`. The else branch is stored in `elseChildren` which `invokeActions` does not traverse.
+
+```
+<!-- BROKEN — action in else branch never fires -->
+<%if [<condition>]%>
+  <$action-log message="true"/>
+<%else%>
+  <$action-log message="false"/>
+<%endif%>
+
+<!-- CORRECT — use $list with emptyMessage -->
+<$list filter="[<condition>]" variable="ignore">
+  <$action-log message="true"/>
+</$list>
+<$list filter="[<condition>]" emptyMessage="""<$action-log message="false"/>"""/>
+```
+
+Read-only rendering (not actions) works fine with `<%if%>`.

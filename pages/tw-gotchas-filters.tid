@@ -1,0 +1,122 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-filters
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/filters
+llm-help-description: Filter pitfalls — no short-circuit, :filter negation, get[] emptiness, dot variables, \function syntax
+llm-help-sort: 02
+type: text/vnd.tiddlywiki
+
+Filter Expression Gotchas
+
+1. Filters do NOT short-circuit
+
+In a single run like `[<var>is[blank]then[yes]else{!!field}enlist-input<var>]`, ALL operators execute sequentially. `then[yes]` does NOT stop the chain — `enlist-input` still runs and can wipe out the result.
+
+```
+<!-- BROKEN — enlist-input runs even after then[yes] -->
+[<var>is[blank]then[yes]else{!!field}enlist-input<var>match<x>]
+
+<!-- CORRECT — use ~ (else) between separate runs -->
+[<var>is[blank]then[yes]] ~[{!!field}enlist-input[]match<var>then[yes]]
+```
+
+The `~` operator means "use next run only if previous returned empty".
+
+---
+
+2. `:filter` does not support `!` negation
+
+Negated operators like `!has[field]` and `!is[blank]` silently fail inside `:filter` — they produce no output, filtering out every item.
+
+```
+<!-- BROKEN — !has silently returns nothing, all items filtered out -->
+[tag[X]]:filter[<currentTiddler>!has[my-field]]
+
+<!-- CORRECT — chain !has directly in the run -->
+[tag[X]!has[my-field]]
+
+<!-- CORRECT — if you must use :filter, invert the logic -->
+[tag[X]]:filter[<currentTiddler>get[my-field]is[blank]then[yes]]
+<!-- (but this also has issues — see gotcha #3) -->
+```
+
+---
+
+3. `get[field]` returns nothing (not "") for missing/empty fields
+
+`get[fieldname]` on a missing or empty field returns **no output** — not an empty string. So `is[blank]` after `get` on a missing field has no input and produces nothing.
+
+```
+<!-- BROKEN — get returns nothing, is[blank] has no input -->
+:filter[<currentTiddler>get[my-field]is[blank]]
+
+<!-- CORRECT — use !has for missing/empty fields -->
+[<tiddlers>!has[my-field]]
+```
+
+`has[field]` returns true only when the field exists AND is non-empty.
+
+---
+
+4. Variable names with dots don't work in `<>` syntax
+
+`<f.status>` in a filter does NOT resolve a variable named `f.status`. The dot breaks variable resolution.
+
+```
+<!-- BROKEN -->
+<$let f.status="active">[<f.status>match[active]]</$let>
+
+<!-- CORRECT — use camelCase or hyphens -->
+<$let fStatus="active">[<fStatus>match[active]]</$let>
+```
+
+---
+
+5. `\function` body is single-line only
+
+Everything after `\function name(params)` on the SAME line is the filter. Continuation lines become visible body text.
+
+```
+<!-- BROKEN — line 2 is body text, not part of the function -->
+\function myFunc()
+  [all[tiddlers]tag[X]]
+
+<!-- CORRECT — entire filter on one line -->
+\function myFunc() [all[tiddlers]tag[X]] :filter[get[status]match[active]]
+```
+
+---
+
+6. Operator chaining after `function[]` — watch the brackets
+
+After `function[name]`, the `]]` looks like a closing run. Chaining operators AFTER `]]` puts them outside the run.
+
+```
+<!-- BROKEN — count[] is outside the run -->
+[function[myFunc]]count[]
+
+<!-- CORRECT — chain inside the same run -->
+[function[myFunc]count[]]
+
+<!-- CORRECT — new run with + prefix -->
+[function[myFunc]] +[count[]]
+```
+
+---
+
+7. `<now>` vs `now[]` vs `<<now>>`
+
+- `<now>` in a filter — NOT a standard variable, produces wrong results
+- `<<now "DDth MMM YYYY">>` — standard TW macro for display
+- For filter comparison: capture into a variable first with `$let`
+
+```
+<!-- Display -->
+<<now "DDth MMM YYYY">>
+
+<!-- Filter comparison -->
+<$let today={{{[<now YYYY0MM0DD>]}}}>
+  [<today>compare:date:gt[20260101]]
+</$let>
+```

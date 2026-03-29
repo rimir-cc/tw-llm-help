@@ -1,0 +1,68 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-slots
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/slots
+llm-help-description: $slot/$fill scope limitations — no colons in names, procedure scope, @scope CSS
+llm-help-sort: 05
+type: text/vnd.tiddlywiki
+
+$slot / $fill Gotchas
+
+1. No colons in slot/fill names
+
+`$name="view:sco"` does NOT match between `$slot` and `$fill`. TW silently fails — no error, just falls back to default content.
+
+```
+<!-- BROKEN — colon breaks matching -->
+<$slot $name="view:sco"/>  +  <$fill $name="view:sco">
+
+<!-- CORRECT — use hyphens -->
+<$slot $name="view-sco"/>  +  <$fill $name="view-sco">
+```
+
+---
+
+2. $slot inside \procedure does NOT find $fill from outer $transclude $tiddler=
+
+This is the biggest gotcha. When a consumer transcludes a component tiddler with `$fill` content, `$slot` calls INSIDE a `\procedure` defined in that tiddler cannot find the fills.
+
+```
+<!-- Component tiddler: my-component.tid -->
+\procedure my-view(element)
+<$slot $name="my-slot" element=<<element>>>fallback</$slot>
+\end
+
+<!-- Body level: -->
+BODY: <$slot $name="my-slot">fallback</$slot>         <!-- WORKS -->
+PROC: <$transclude $variable="my-view" element="x"/>   <!-- DOES NOT WORK -->
+```
+
+Workarounds:
+
+- Put `$slot` at body level with `<%if%>` type branching (vtabs pattern):
+```
+<%if [<type>match[sec]]%>
+  <$slot $name="view-sec" element=<<element>>><<element>></$slot>
+<%elseif [<type>match[act]]%>
+  <$slot $name="view-act" element=<<element>>><<element>></$slot>
+<%endif%>
+```
+
+- Transclude an intermediate tiddler (pills pattern) — `$slot` works across `$transclude $tiddler=` boundaries but not through bare `$transclude $variable=` from body level.
+
+---
+
+3. @scope CSS is Chrome-only
+
+`@scope (.my-class) { ... }` does NOT work in Firefox. Use class-prefixed CSS instead:
+
+```css
+/* BROKEN in Firefox */
+@scope (.my-component) {
+  span { color: red; }
+}
+
+/* CORRECT — works everywhere */
+.my-component span { color: red; }
+```

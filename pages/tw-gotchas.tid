@@ -1,0 +1,22 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas
+llm-help-description: Common TiddlyWiki pitfalls for LLMs — titles, filters, wikitext, shadows, slots
+llm-help-sort: 02
+type: text/vnd.tiddlywiki
+
+TiddlyWiki Gotchas
+
+Hard-won lessons about TiddlyWiki syntax and behavior. Read these BEFORE writing wikitext, filters, or creating tiddlers — they will save you from the most common mistakes.
+
+Categories:
+
+- **titles** — Tiddler titles with spaces, double-bracket syntax, list fields
+- **filters** — Filter expression pitfalls (short-circuit, `:filter`, chaining, variables)
+- **wikitext** — Markup gotchas (`$reveal`, `code-body`, comments, `$let` vs `$set`)
+- **shadows** — Shadow tiddler discovery (`[all[tiddlers+shadows]...]`)
+- **slots** — `$slot`/`$fill` scope limitations, naming restrictions
+
+Navigate deeper: llm_help("tw-gotchas/titles"), llm_help("tw-gotchas/filters"), llm_help("tw-gotchas/wikitext"), llm_help("tw-gotchas/shadows"), llm_help("tw-gotchas/slots")

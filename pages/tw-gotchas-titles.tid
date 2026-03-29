@@ -1,0 +1,66 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-titles
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/titles
+llm-help-description: Tiddler titles with spaces need [[double brackets]] — in filters, lists, tags, and tool calls
+llm-help-sort: 01
+type: text/vnd.tiddlywiki
+
+Titles with Spaces — [[Double Bracket]] Rules
+
+This is the single most common LLM mistake. Tiddler titles containing spaces MUST be wrapped in `[[double brackets]]` in most contexts. Without them, each word is treated as a separate title.
+
+When brackets are REQUIRED:
+
+- **Filter expressions**: `[title[My Tiddler]]` or `[[My Tiddler]]` — without brackets, `My` and `Tiddler` are separate filter runs
+- **List fields** (tags, list): `[[Tag One]] [[Tag Two]]` — without brackets, this is 4 separate tags
+- **`$list` filter parameter**: `filter="[[My Tiddler]]"` — bare `My Tiddler` is two separate titles
+- **Tool calls** (`create_tiddler`, `set_field`, etc.): title parameter must be the exact title string, but any filter-based lookup needs brackets
+- **`enlist` / `enlist-input`**: These split on spaces — `enlist[[My Tiddler]]` returns two items `My` and `Tiddler`
+- **`tag[]` operator**: `[tag[My Tag]]` works (operator parameter is a single string), but listing results in a `tags` field needs brackets: `[[My Tag]] [[Other Tag]]`
+
+When brackets are NOT needed:
+
+- **Widget attributes**: `$tiddler="My Tiddler"` — quoted attributes are single strings
+- **`title` field value**: `title: My Tiddler` in a `.tid` file — the field value is the entire line
+- **`$action-navigate $to="My Tiddler"`** — widget attribute, not a filter
+- **`{{My Tiddler!!field}}`** — transclusion syntax handles spaces (but `{{My Tiddler}}` without `!!field` is fine too)
+
+Common mistakes:
+
+```
+<!-- BROKEN — opens "Project" and "Overview" as two tiddlers -->
+<$action-navigate $to=Project Overview/>
+
+<!-- CORRECT -->
+<$action-navigate $to="Project Overview"/>
+
+<!-- BROKEN — filter returns two items: "My" and "Tiddler" -->
+[My Tiddler]
+
+<!-- CORRECT -->
+[[My Tiddler]]
+
+<!-- BROKEN — tags field has 4 tags instead of 2 -->
+tags: Tag One Tag Two
+
+<!-- CORRECT -->
+tags: [[Tag One]] [[Tag Two]]
+
+<!-- BROKEN — enlist splits on spaces -->
+<$list filter="[enlist[alpha beta My Tiddler]]">
+<!-- produces: alpha, beta, My, Tiddler (4 items) -->
+
+<!-- CORRECT — use enlist with proper bracketing -->
+<$list filter="[enlist[alpha beta [[My Tiddler]]]]">
+<!-- produces: alpha, beta, My Tiddler (3 items) -->
+```
+
+Best practice: When in doubt, ALWAYS use brackets around titles. `[[simple-title]]` works fine even when brackets aren't strictly needed.
+
+Title naming conventions to avoid the problem:
+
+- Use hyphens or slashes: `my-project-overview`, `projects/overview`
+- Use CamelCase: `ProjectOverview`
+- System tiddlers: `$:/config/my/setting` (no spaces)

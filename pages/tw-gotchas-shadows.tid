@@ -1,0 +1,37 @@
+created: 20260329120000000
+modified: 20260329120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-shadows
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/shadows
+llm-help-description: Shadow tiddlers from plugins need [all[tiddlers+shadows]] to be found by tag/filter
+llm-help-sort: 04
+type: text/vnd.tiddlywiki
+
+Shadow Tiddler Discovery
+
+Plugin-bundled tiddlers are "shadow" tiddlers. The default `[tag[]]` operator only searches the main wiki store (real tiddlers), NOT the shadow store.
+
+```
+<!-- BROKEN — misses shadow tiddlers from plugins -->
+[tag[$:/tags/MyTag]]
+
+<!-- CORRECT — includes both real and shadow tiddlers -->
+[all[tiddlers+shadows]tag[$:/tags/MyTag]]
+```
+
+When to use `[all[tiddlers+shadows]...]`:
+
+- Any filter that discovers tiddlers by tag where the tagged tiddlers may come from plugins
+- Discovery patterns like "list all tiddlers tagged X" where X is a custom tag
+- Looking up layout templates, app definitions, tool registrations, or config tiddlers shipped by plugins
+
+When plain `[tag[]]` is fine:
+
+- Searching only user-created content (e.g., diary entries, notes)
+- Contexts where you know all matching tiddlers are in the main store
+
+Symptoms of this bug:
+
+- "No items found" even though tagged tiddlers exist inside a plugin
+- Dynamic lists that work after editing (overriding) a shadow tiddler but not before
+- Features that work in dev (where .tid files are real tiddlers) but break in single-file wiki (where they're shadows)
