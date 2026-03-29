@@ -45,7 +45,8 @@ All help pages must be tagged: `$:/tags/rimir/llm-help/page`
 
 |!Function |!Parameters |!Returns |
 |`_llm-help-all-pages` |none |All help page tiddler titles |
-|`_llm-help-ctx-pages` |`ctx` |Pages with `llm-help-context` matching ctx |
+|`_llm-help-ctx-match` |`page-ctx, ctx` |First overlapping key between page and active context (helper) |
+|`_llm-help-ctx-pages` |`ctx` |Pages with `llm-help-context` matching ctx (set intersection) |
 |`_llm-help-visible-pages` |`ctx` |Pages visible in given context (context-free + context-matched) |
 |`_llm-help-resolve-ctx` |`ctx` |Effective context (param or state tiddler) |
 |`_llm-help-root-page` |`ctx` |Root page tiddler (blank path) |
