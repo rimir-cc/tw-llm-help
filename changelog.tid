@@ -5,6 +5,7 @@ type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
 |0.1.12 |2026-03-30 |Add `[[` `]]` literal brackets gotcha to tw-gotchas/filters — brackets are filter syntax delimiters, must use variables |
+|0.1.17 |2026-03-30 |Fix context popup: use `$click-outside` widget (stays open on checkbox toggle), move styling to stylesheet (fix transparent background from `<<colour>>` in inline styles) |
 |0.1.16 |2026-03-30 |Context matching changed from exact to hierarchical prefix (`rimir/appify` matches `rimir/appify/channels`). Update docs: architecture, overview, faq, reference. Add browser state tiddlers to reference |
 |0.1.15 |2026-03-30 |Settings browser: all contexts selected by default (fallback when state tiddler doesn't exist), Select all / Clear all at top of popup, visible/total page count |
 |0.1.14 |2026-03-30 |Decouple settings browser from chat context — own state tiddler (`$:/state/rimir/llm-help/browser/context`), initializes with all contexts selected, Select all / Clear all buttons, visible/total page count |
