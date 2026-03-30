@@ -7,7 +7,7 @@ type: text/vnd.tiddlywiki
 \function _llm-help-ctx-match(page-ctx, ctx) [<page-ctx>enlist-input[]] :filter[<ctx>enlist-input[]prefix<currentTiddler>] +[first[]]
 \function _llm-help-ctx-pages(ctx) [function[_llm-help-all-pages]has[llm-help-context]] :filter[<ctx>minlength[1]] :filter[function[_llm-help-ctx-match],{!!llm-help-context},<ctx>minlength[1]]
 \function _llm-help-visible-pages(ctx) [function[_llm-help-all-pages]!has[llm-help-context]] [function[_llm-help-ctx-pages],<ctx>]
-\function _llm-help-resolve-ctx(ctx) [<ctx>minlength[1]] ~[{$:/temp/rimir/llm-help/active-context}]
+\function _llm-help-resolve-ctx(ctx) [<ctx>minlength[1]] ~[<__helpContext>minlength[1]] ~[{$:/temp/rimir/llm-help/active-context}]
 \function _llm-help-root-page(ctx) [function[_llm-help-visible-pages],<ctx>!has[llm-help-path]] +[first[]]
 \function _llm-help-at(path, ctx) [function[_llm-help-visible-pages],<ctx>]:filter[<currentTiddler>get[llm-help-path]enlist-input[]match<path>] +[first[]]
 \function _llm-help-all-paths(ctx) [function[_llm-help-visible-pages],<ctx>get[llm-help-path]enlist-input[]]

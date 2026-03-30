@@ -14,7 +14,7 @@ type: text/vnd.tiddlywiki
 >
 <%if [<requested-path>is[blank]] %>
 <$let prefix=""
-      page-tid={{{ [function[_llm-help-visible-pages],<ctx>] :filter[<currentTiddler>get[llm-help-path]is[blank]] +[first[]] }}}
+      page-tid={{{ [function[_llm-help-root-page],<ctx>] }}}
 >
 <%if [<page-tid>minlength[1]] %>
 <$transclude tiddler=<<page-tid>> mode="block"/>
