@@ -120,3 +120,22 @@ After `function[name]`, the `]]` looks like a closing run. Chaining operators AF
   [<today>compare:date:gt[20260101]]
 </$let>
 ```
+
+---
+
+8. `[[` and `]]` cannot be used as literal strings in filters
+
+Double square brackets are filter syntax delimiters (title literals). You cannot produce them via `addprefix` or `addsuffix` inside a filter — they get interpreted as filter syntax, not as literal characters.
+
+```
+<!-- BROKEN — [[ and ]] are parsed as filter delimiters -->
+[<title>addprefix[[[]addsuffix[]]]]
+
+<!-- CORRECT — store brackets in variables, then reference them -->
+<$let ob="[[" cb="]]"
+  wrapped={{{ [<title>addprefix<ob>addsuffix<cb>] }}}>
+  <!-- wrapped = "[[My Tiddler]]" as a literal string -->
+</$let>
+```
+
+This commonly comes up when building filter expressions as strings (e.g., for `allowFilter` or dynamic `$list` filters) where tiddler titles need `[[bracket]]` wrapping to handle spaces.

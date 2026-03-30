@@ -4,6 +4,7 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.12 |2026-03-30 |Add `[[` `]]` literal brackets gotcha to tw-gotchas/filters — brackets are filter syntax delimiters, must use variables |
 |0.1.11 |2026-03-29 |Fix multi-context filtering: replace `search` substring match with proper set-intersection via helper function — multiple active contexts now work correctly |
 |0.1.10 |2026-03-29 |Add conditional filter operators gotcha to tw-gotchas/filter-runs — build filter strings dynamically with $let instead of duplicating $list blocks |
 |0.1.9 |2026-03-29 |Add nested {{{ }}} gotcha to tw-gotchas/wikitext — filter expressions cannot nest |
