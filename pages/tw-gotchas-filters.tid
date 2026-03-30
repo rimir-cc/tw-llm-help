@@ -139,3 +139,24 @@ Double square brackets are filter syntax delimiters (title literals). You cannot
 ```
 
 This commonly comes up when building filter expressions as strings (e.g., for `allowFilter` or dynamic `$list` filters) where tiddler titles need `[[bracket]]` wrapping to handle spaces.
+
+---
+
+9. `subfilter` with literal filter operands — nested brackets break parsing
+
+`[subfilter[tag[sensitive]]]` does NOT work. The parser sees `[subfilter[tag[sensitive]` as the operand and `]]` as the closing brackets, producing a malformed filter.
+
+```
+<!-- BROKEN — nested brackets confuse the parser -->
+[subfilter[tag[sensitive]]]
+
+<!-- CORRECT — use {tiddler-reference} to read the filter from a tiddler's text field -->
+[subfilter{$:/config/my-protection-filter}]
+
+<!-- CORRECT — use <variable> if filter is in a variable -->
+<$let myFilter="[tag[sensitive]]">
+  [subfilter<myFilter>]
+</$let>
+```
+
+This applies to any operator that takes a filter expression as its operand (`subfilter`, `filter`, `reduce`, `map`, etc.). Always use indirection via `{tiddler}` or `<variable>` — never embed a filter literally inside `[]` brackets.
