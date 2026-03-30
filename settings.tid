@@ -78,15 +78,18 @@ No help page found at this path.
 <div class="llmh-stats rr-muted rr-small">
 <<visible-count>>/<<page-count>> help pages visible
 <%if [<all-ctx-keys>minlength[1]] %>
- | <$button popup="$:/state/rimir/llm-help/ctx-popup" class="tc-btn-invisible tc-tiddlylink llmh-ctx-toggle-btn">
+ | <$button class="tc-btn-invisible tc-tiddlylink llmh-ctx-toggle-btn">
 <$list filter="[[$:/state/rimir/llm-help/browser/context]!is[tiddler]]" variable="ignore">
 <$action-setfield $tiddler="$:/state/rimir/llm-help/browser/context" text={{{ [function[_llm-help-all-context-keys]join[ ]] }}}/>
 </$list>
+<$action-setfield $tiddler="$:/state/rimir/llm-help/ctx-popup" text={{{ [{$:/state/rimir/llm-help/ctx-popup}match[open]then[closed]else[open]] }}}/>
 contexts &#x25BE;</$button>
 <%endif%>
 </div>
 <%if [<all-ctx-keys>minlength[1]] %>
-<$reveal stateTitle="$:/state/rimir/llm-help/ctx-popup" type="popup" position="above" animate="yes" class="tc-drop-down llmh-ctx-popup">
+<$reveal type="match" state="$:/state/rimir/llm-help/ctx-popup" text="open" animate="yes">
+<$click-outside state="$:/state/rimir/llm-help/ctx-popup" closedValue="closed">
+<div class="tc-drop-down llmh-ctx-popup">
 <div class="llmh-ctx-popup-header rr-muted rr-small">Browser preview only — does not affect chats</div>
 <div class="llmh-ctx-option llmh-ctx-clear">
 <$button class="tc-btn-invisible tc-tiddlylink">
@@ -108,6 +111,8 @@ Clear all
 </div>
 </$let>
 </$list>
+</div>
+</$click-outside>
 </$reveal>
 <%endif%>
 </$let>
