@@ -5,6 +5,7 @@ type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
 |0.1.12 |2026-03-30 |Add `[[` `]]` literal brackets gotcha to tw-gotchas/filters — brackets are filter syntax delimiters, must use variables |
+|0.1.15 |2026-03-30 |Settings browser: all contexts selected by default (fallback when state tiddler doesn't exist), Select all / Clear all at top of popup, visible/total page count |
 |0.1.14 |2026-03-30 |Decouple settings browser from chat context — own state tiddler (`$:/state/rimir/llm-help/browser/context`), initializes with all contexts selected, Select all / Clear all buttons, visible/total page count |
 |0.1.13 |2026-03-30 |Add filter gotcha #9: `subfilter`/`filter`/`reduce`/`map` cannot take literal filter operands with nested brackets — use `{tiddler}` or `<variable>` indirection |
 |0.1.11 |2026-03-29 |Fix multi-context filtering: replace `search` substring match with proper set-intersection via helper function — multiple active contexts now work correctly |

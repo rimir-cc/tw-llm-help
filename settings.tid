@@ -27,13 +27,9 @@ Root
 \end
 
 <$importvariables filter="[[$:/plugins/rimir/llm-help/functions]]">
-<!-- Initialize browser context with all keys if state tiddler doesn't exist yet -->
-<$list filter="[[$:/state/rimir/llm-help/browser/context]!is[tiddler]]" variable="ignore">
-<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/context" text={{{ [function[_llm-help-all-context-keys]join[ ]] }}}/>
-</$list>
 <$let
   browser-path={{{ [{$:/state/rimir/llm-help/browser/path}else[]] }}}
-  ctx={{{ [{$:/state/rimir/llm-help/browser/context}] }}}
+  ctx={{{ [[$:/state/rimir/llm-help/browser/context]is[tiddler]then{$:/state/rimir/llm-help/browser/context}] ~[function[_llm-help-all-context-keys]join[ ]] }}}
   root-page={{{ [function[_llm-help-root-page],<ctx>] }}}
   found-page={{{ [function[_llm-help-at],<browser-path>,<ctx>] }}}
   page-tid={{{ [<browser-path>is[blank]then<root-page>] ~[<found-page>] }}}
@@ -75,12 +71,9 @@ No help page found at this path.
 </div>
 <%endif%>
 
-</$let>
-
 <$let page-count={{{ [function[_llm-help-all-pages]count[]] }}}
-  active-ctx={{{ [{$:/state/rimir/llm-help/browser/context}] }}}
   all-ctx-keys={{{ [function[_llm-help-all-context-keys]] }}}
-  visible-count={{{ [function[_llm-help-visible-pages],{$:/state/rimir/llm-help/browser/context}count[]] }}}
+  visible-count={{{ [function[_llm-help-visible-pages],<ctx>count[]] }}}
 >
 <div class="llmh-stats rr-muted rr-small">
 <<visible-count>>/<<page-count>> help pages visible
@@ -90,17 +83,7 @@ No help page found at this path.
 </div>
 <%if [<all-ctx-keys>minlength[1]] %>
 <$reveal stateTitle="$:/state/rimir/llm-help/ctx-popup" type="popup" position="above" animate="yes" class="tc-drop-down llmh-ctx-popup">
-<div class="llmh-ctx-popup-header rr-muted rr-small">Toggle context keys (browser preview only — does not affect chats):</div>
-<$list filter="[function[_llm-help-all-context-keys]]" variable="ctx-key">
-<$let ctx-page-count={{{ [function[_llm-help-all-pages]has[llm-help-context]] :filter[get[llm-help-context]enlist-input[]match<ctx-key>] +[count[]] }}}
->
-<div class="llmh-ctx-option">
-<$checkbox tiddler="$:/state/rimir/llm-help/browser/context" listField="text" checked=<<ctx-key>> unchecked="" default="">
-<$text text=<<ctx-key>>/> <span class="rr-muted rr-small">(<$text text=<<ctx-page-count>>/> pages)</span>
-</$checkbox>
-</div>
-</$let>
-</$list>
+<div class="llmh-ctx-popup-header rr-muted rr-small">Browser preview only — does not affect chats</div>
 <div class="llmh-ctx-option llmh-ctx-clear">
 <$button class="tc-btn-invisible tc-tiddlylink">
 <$action-setfield $tiddler="$:/state/rimir/llm-help/browser/context" text={{{ [function[_llm-help-all-context-keys]join[ ]] }}}/>
@@ -111,6 +94,16 @@ Select all
 Clear all
 </$button>
 </div>
+<$list filter="[function[_llm-help-all-context-keys]]" variable="ctx-key">
+<$let ctx-page-count={{{ [function[_llm-help-all-pages]has[llm-help-context]] :filter[get[llm-help-context]enlist-input[]match<ctx-key>] +[count[]] }}}
+>
+<div class="llmh-ctx-option">
+<$checkbox tiddler="$:/state/rimir/llm-help/browser/context" listField="text" checked=<<ctx-key>> unchecked="" default="">
+<$text text=<<ctx-key>>/> <span class="rr-muted rr-small">(<$text text=<<ctx-page-count>>/> pages)</span>
+</$checkbox>
+</div>
+</$let>
+</$list>
 </$reveal>
 <%endif%>
 </$let>
@@ -171,4 +164,5 @@ Browse
 </$list>
 </div>
 
+</$let>
 </$importvariables>
