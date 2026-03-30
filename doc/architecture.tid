@@ -47,9 +47,9 @@ Virtual parent nodes are synthesized automatically when children exist but no ex
 
 !! Context filtering
 
-Context uses set-intersection: a page is visible if it has no `llm-help-context` (always visible) or if any of its context keys match any of the active context keys.
+Context uses hierarchical prefix matching: a page is visible if it has no `llm-help-context` (always visible) or if any of its context keys are a prefix of any active context key. For example, active context `rimir/appify` makes pages with context `rimir/appify`, `rimir/appify/channels`, or `rimir/appify/views` visible.
 
-Active context comes from `$:/temp/rimir/llm-help/active-context` (set by the environment, e.g., appify sets it when an app becomes active) or the tool's optional `context` parameter. Uses `$:/temp/` so it resets on reload — correct because context reflects what's active right now, not a permanent preference.
+For tool calls, active context comes from `$:/temp/rimir/llm-help/active-context` (synced from the per-chat `llm-help-context` field before each tool execution) or the tool's optional `context` parameter. The settings browser uses its own `$:/state/rimir/llm-help/browser/context` tiddler (defaults to all keys, independent from chats).
 
 !! Dynamic content
 

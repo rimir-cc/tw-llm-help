@@ -3,6 +3,7 @@ modified: 20260329120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-slots
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/slots
+llm-help-context: tw-gotchas
 llm-help-description: $slot/$fill scope limitations — no colons in names, procedure scope, @scope CSS
 llm-help-sort: 05
 type: text/vnd.tiddlywiki

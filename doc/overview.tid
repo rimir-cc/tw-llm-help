@@ -22,7 +22,7 @@ llm help provides a self-discoverable, hierarchical documentation system that LL
 
 * ''Hierarchical navigation'' -- help pages organized in a tree of any depth, navigated level by level
 * ''Dynamic content'' -- pages are wikitext rendered at call time, pulling live data from the wiki (e.g., typed schemas, existing instances)
-* ''Context-aware'' -- pages can be scoped to specific contexts (e.g., an appify app) via set-intersection filtering
+* ''Context-aware'' -- pages can be scoped to specific contexts (e.g., an appify app) via hierarchical prefix matching
 * ''Multi-path mounting'' -- same page reachable from multiple paths in the tree via space-separated `llm-help-path` values
 * ''Plugin-extensible'' -- any plugin contributes help pages by tagging tiddlers with `$:/tags/rimir/llm-help/page`
 * ''User shortcuts'' -- users add quick-reference help pages via the settings UI for common tasks or failing use cases

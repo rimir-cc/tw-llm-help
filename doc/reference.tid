@@ -45,8 +45,8 @@ All help pages must be tagged: `$:/tags/rimir/llm-help/page`
 
 |!Function |!Parameters |!Returns |
 |`_llm-help-all-pages` |none |All help page tiddler titles |
-|`_llm-help-ctx-match` |`page-ctx, ctx` |First overlapping key between page and active context (helper) |
-|`_llm-help-ctx-pages` |`ctx` |Pages with `llm-help-context` matching ctx (set intersection) |
+|`_llm-help-ctx-match` |`page-ctx, ctx` |First page context key that prefix-matches any active context key (helper) |
+|`_llm-help-ctx-pages` |`ctx` |Pages with `llm-help-context` matching ctx (hierarchical prefix match) |
 |`_llm-help-visible-pages` |`ctx` |Pages visible in given context (context-free + context-matched) |
 |`_llm-help-resolve-ctx` |`ctx` |Effective context (param or state tiddler) |
 |`_llm-help-root-page` |`ctx` |Root page tiddler (blank path) |
@@ -57,7 +57,9 @@ All help pages must be tagged: `$:/tags/rimir/llm-help/page`
 !! State tiddlers
 
 |!Tiddler |!Purpose |
-|`$:/temp/rimir/llm-help/active-context` |Active context keys (space-separated). Transient — resets on reload. Set by the environment (e.g., appify sets it when an app becomes active). |
+|`$:/temp/rimir/llm-help/active-context` |Active context keys for tool calls (space-separated). Synced from per-chat `llm-help-context` field before tool execution. Transient — resets on reload. |
+|`$:/state/rimir/llm-help/browser/context` |Settings browser context (space-separated). Independent from chats. Defaults to all keys on first use. |
+|`$:/state/rimir/llm-help/browser/path` |Current path in the settings help browser. |
 
 !! User shortcut tiddlers
 
