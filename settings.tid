@@ -78,7 +78,11 @@ No help page found at this path.
 <div class="llmh-stats rr-muted rr-small">
 <<visible-count>>/<<page-count>> help pages visible
 <%if [<all-ctx-keys>minlength[1]] %>
- | <$button popup="$:/state/rimir/llm-help/ctx-popup" class="tc-btn-invisible tc-tiddlylink llmh-ctx-toggle-btn">contexts &#x25BE;</$button>
+ | <$button popup="$:/state/rimir/llm-help/ctx-popup" class="tc-btn-invisible tc-tiddlylink llmh-ctx-toggle-btn">
+<$list filter="[[$:/state/rimir/llm-help/browser/context]!is[tiddler]]" variable="ignore">
+<$action-setfield $tiddler="$:/state/rimir/llm-help/browser/context" text={{{ [function[_llm-help-all-context-keys]join[ ]] }}}/>
+</$list>
+contexts &#x25BE;</$button>
 <%endif%>
 </div>
 <%if [<all-ctx-keys>minlength[1]] %>
