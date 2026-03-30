@@ -75,7 +75,7 @@ No help page found at this path.
   all-ctx-keys={{{ [function[_llm-help-all-context-keys]] }}}
   visible-count={{{ [function[_llm-help-visible-pages],<ctx>count[]] }}}
 >
-<div class="llmh-stats rr-muted rr-small" style="position:relative;">
+<div class="llmh-stats rr-muted rr-small">
 <<visible-count>>/<<page-count>> help pages visible
 <%if [<all-ctx-keys>minlength[1]] %>
  | <$button class="tc-btn-invisible tc-tiddlylink llmh-ctx-toggle-btn">
@@ -89,7 +89,7 @@ contexts &#x25BE;</$button>
 <%if [<all-ctx-keys>minlength[1]] %>
 <$reveal type="match" state="$:/state/rimir/llm-help/ctx-popup" text="open" animate="yes">
 <$click-outside state="$:/state/rimir/llm-help/ctx-popup" closedValue="closed">
-<div class="llmh-ctx-popup" style="position:absolute; z-index:1000; background:<<colour page-background>>; border:1px solid <<colour dropdown-border>>; padding:8px; box-shadow:2px 2px 4px rgba(0,0,0,0.15); min-width:200px; max-width:350px;">
+<div class="llmh-ctx-popup">
 <div class="llmh-ctx-popup-header rr-muted rr-small">Browser preview only — does not affect chats</div>
 <div class="llmh-ctx-option llmh-ctx-clear">
 <$button class="tc-btn-invisible tc-tiddlylink">
