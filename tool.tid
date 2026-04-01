@@ -6,6 +6,7 @@ tool-name: llm_help
 tool-description: Browse the hierarchical help system to find wiki-specific documentation. Call with no path to see top-level topics. Call with a path to navigate deeper. Each level returns subtopics with descriptions so you can find the information you need for your current task.
 tool-schema: {"type":"object","properties":{"path":{"type":"string","description":"Help path to navigate. Empty or omitted for root. Use paths from subtopic listings, e.g. 'data-model', 'data-model/person/create'"},"context":{"type":"string","description":"Optional context override (space-separated keys). Usually set automatically by the environment."}},"required":[]}
 tool-mode: read
+tool-category: core
 type: text/vnd.tiddlywiki
 
 <$importvariables filter="[[$:/plugins/rimir/llm-help/functions]]">
