@@ -65,3 +65,21 @@ Title naming conventions to avoid the problem:
 - Use hyphens or slashes: `my-project-overview`, `projects/overview`
 - Use CamelCase: `ProjectOverview`
 - System tiddlers: `$:/config/my/setting` (no spaces)
+
+---
+
+Titles with `/` after a file extension break filesystem sync:
+
+When a tiddler title appends `/child` to a title that ends with a file extension (e.g., `.pdf`), the filesystem adapter tries to create a directory where the file already exists. This causes `ENOTDIR` errors in a retry loop.
+
+```
+<!-- BROKEN — filesystem can't create report.pdf/extracted.tid because report.pdf is a file -->
+My Report.pdf/extracted
+My Report.pdf/summaries/model-timestamp
+
+<!-- CORRECT — use dot instead of slash for child tiddlers of file-backed tiddlers -->
+My Report.pdf.extracted
+My Report.pdf.summaries/model-timestamp
+```
+
+This applies to any tiddler whose title matches a real file on disk (common with `_canonical_uri` tiddlers for uploaded files, PDFs, etc.).

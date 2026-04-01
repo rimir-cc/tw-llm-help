@@ -161,3 +161,19 @@ This commonly comes up when building filter expressions as strings (e.g., for `a
 ```
 
 This applies to any operator that takes a filter expression as its operand (`subfilter`, `filter`, `reduce`, `map`, etc.). Always use indirection via `{tiddler}` or `<variable>` — never embed a filter literally inside `[]` brackets.
+
+---
+
+10. `jsonget` chain fails on array items — use `jsonextract` first
+
+When iterating a JSON array with `:map`, chaining `jsonget<currentTiddler>jsonget[field]` silently returns empty. The second `jsonget` doesn't receive the sub-object. Use `jsonextract` to extract the sub-object, then `jsonget` on the result:
+
+```
+<!-- BROKEN — jsonget<idx>jsonget[id] returns empty for every item -->
+[<cache>get[text]jsonindexes[]] :map[<cache>get[text]jsonget<currentTiddler>jsonget[id]]
+
+<!-- CORRECT — jsonextract gets the sub-object, then jsonget reads the field -->
+[<cache>get[text]jsonindexes[]] :map:flat[<cache>get[text]jsonextract<currentTiddler>jsonget[id]]
+```
+
+Note the `:flat` suffix on `:map` — required when the mapped expression returns a single value per item.
