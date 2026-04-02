@@ -1,0 +1,76 @@
+title: $:/plugins/rimir/llm-help/debug-page
+tags: $:/tags/rimir/llm-connect/debug-panel
+panel-name: Help Tree
+panel-icon: 🌳
+panel-order: 61
+type: text/vnd.tiddlywiki
+
+\whitespace trim
+
+\procedure render-tree(prefix, depth:"0")
+<$let all-segs={{{ [function[_llm-help-child-segments],<prefix>,<all-ctx>] }}}>
+<$list filter="[function[_llm-help-child-segments],<prefix>,<all-ctx>]" variable="segment">
+<$let
+  child-path={{{ [<prefix>is[blank]then<segment>] ~[<prefix>addsuffix<segment>] }}}
+  child-tid-visible={{{ [function[_llm-help-at],<child-path>,<active-ctx>] }}}
+  child-tid-any={{{ [function[_llm-help-at],<child-path>,<all-ctx>] }}}
+  child-tid={{{ [<child-tid-visible>minlength[1]then<child-tid-visible>] ~[<child-tid-any>] }}}
+  is-visible={{{ [<child-tid-visible>minlength[1]then[yes]] ~[[no]] }}}
+  child-desc={{{ [<child-tid>get[llm-help-description]] }}}
+  child-ctx={{{ [<child-tid>get[llm-help-context]] }}}
+  sub-prefix={{{ [<child-path>addsuffix[/]] }}}
+  has-children-visible={{{ [function[_llm-help-child-segments],<sub-prefix>,<active-ctx>first[1]] }}}
+  has-children-any={{{ [function[_llm-help-child-segments],<sub-prefix>,<all-ctx>first[1]] }}}
+  has-children={{{ [<has-children-any>minlength[1]then[yes]] ~[[no]] }}}
+  any-visible-in-subtree={{{ [<is-visible>match[yes]] ~[<has-children-visible>minlength[1]then[yes]] ~[function[_llm-help-child-segments],<sub-prefix>,<active-ctx>] +[first[]] }}}
+  next-depth={{{ [<depth>add[1]] }}}
+  show-hidden={{{ [{$:/state/rimir/llm-help/debug-show-hidden}match[yes]] }}}
+>
+<%if [<is-visible>match[yes]] ~[<show-hidden>match[yes]] %>
+<div class={{{ [[llmh-debug-node]] [<is-visible>match[no]then[llmh-debug-hidden]] +[join[ ]] }}}>
+<span class="llmh-debug-path"><%if [<has-children>match[yes]] %>/<$text text=<<segment>>/><%else%><$text text=<<segment>>/><%endif%></span>
+<%if [<child-tid>minlength[1]] %>
+<span class="llmh-debug-desc"><$text text=<<child-desc>>/></span>
+<%if [<child-ctx>minlength[1]] %><span class="llmh-debug-ctx">[<$text text=<<child-ctx>>/>]</span><%endif%>
+<%else%>
+<span class="llmh-debug-virtual">(virtual)</span>
+<%endif%>
+</div>
+<%if [<has-children>match[yes]] %>
+<div class="llmh-debug-children">
+<$macrocall $name="render-tree" prefix=<<sub-prefix>> depth=<<next-depth>>/>
+</div>
+<%endif%>
+<%endif%>
+</$let>
+</$list>
+</$let>
+\end
+
+<$importvariables filter="[[$:/plugins/rimir/llm-help/functions]]">
+<$let
+  all-ctx={{{ [function[_llm-help-all-context-keys]join[ ]] }}}
+  active-ctx={{{ [<chatTiddler>get[llm-help-context]] }}}
+  total={{{ [function[_llm-help-all-pages]count[]] }}}
+  visible-count={{{ [function[_llm-help-visible-pages],<active-ctx>count[]] }}}
+  root-page={{{ [function[_llm-help-root-page],<active-ctx>] }}}
+  root-desc={{{ [<root-page>get[llm-help-description]] }}}
+>
+
+<div class="llmh-debug-tree">
+<div class="llmh-debug-header">
+<strong><$text text=<<visible-count>>/>/<$text text=<<total>>/> pages visible</strong>
+ · <$checkbox tiddler="$:/state/rimir/llm-help/debug-show-hidden" field="text" checked="yes" unchecked="no" default="no"> show hidden</$checkbox>
+</div>
+
+<div class="llmh-debug-node llmh-debug-root">
+<span class="llmh-debug-path">/</span>
+<%if [<root-page>minlength[1]] %><span class="llmh-debug-desc"><$text text=<<root-desc>>/></span><%endif%>
+</div>
+<div class="llmh-debug-children">
+<$macrocall $name="render-tree" prefix="" depth="0"/>
+</div>
+</div>
+
+</$let>
+</$importvariables>

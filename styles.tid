@@ -186,6 +186,61 @@ type: text/vnd.tiddlywiki
     min-width: 140px;
 }
 
+/* Debug tree */
+.llmh-debug-tree {
+    font-size: 0.85em;
+    line-height: 1.6;
+}
+
+.llmh-debug-header {
+    padding: 4px 0 8px;
+    border-bottom: 1px solid <<colour tiddler-border>>;
+    margin-bottom: 6px;
+    color: <<colour muted-foreground>>;
+}
+
+.llmh-debug-node {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 1px 0;
+}
+
+.llmh-debug-path {
+    font-family: monospace;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.llmh-debug-desc {
+    color: <<colour muted-foreground>>;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.llmh-debug-ctx {
+    font-family: monospace;
+    font-size: 0.85em;
+    color: <<colour tiddler-link-foreground>>;
+    white-space: nowrap;
+}
+
+.llmh-debug-virtual {
+    font-style: italic;
+    color: <<colour muted-foreground>>;
+}
+
+.llmh-debug-children {
+    padding-left: 16px;
+    border-left: 1px solid <<colour tiddler-border>>;
+    margin-left: 4px;
+}
+
+.llmh-debug-hidden {
+    opacity: 0.35;
+}
+
 .llmh-shortcut-item-desc {
     flex: 1;
     color: <<colour muted-foreground>>;
