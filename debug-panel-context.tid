@@ -1,0 +1,20 @@
+title: $:/plugins/rimir/llm-help/debug-panel-context
+tags: $:/tags/rimir/llm-connect/debug-panel
+panel-name: Help Context (int. data)
+panel-icon: 📖
+panel-order: 60
+type: text/vnd.tiddlywiki
+
+\whitespace trim
+
+<$let ctx={{{ [<chatTiddler>get[llm-help-context]] }}} keys={{{ [<chatTiddler>get[llm-help-context]enlist-input[]] }}} count={{{ [<chatTiddler>get[llm-help-context]enlist-input[]count[]] }}}>
+<%if [<count>compare:integer:gt[0]] %>
+<div class="llm-chat-debug-help-ctx">
+<strong><$text text=<<count>>/> active help context keys:</strong>
+<code class="llm-chat-debug-help-ctx-keys"><$list filter="[enlist<keys>sort[]]" variable="key"><$text text=<<key>>/>
+</$list></code>
+</div>
+<%else%>
+<em>(no help context active)</em>
+<%endif%>
+</$let>
