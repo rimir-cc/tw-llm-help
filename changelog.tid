@@ -4,6 +4,7 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.21 |2026-04-02 |Fix debug panel key display — use `$list` directly instead of `{{{ }}}` variable (first-result bug). Each key on its own line |
 |0.1.20 |2026-04-02 |Help context debug panel — read-only view of active help context keys, registered via `$:/tags/rimir/llm-connect/debug-panel` tag. Appears in llm-connect's debug menu when llm-help is installed |
 |0.1.19 |2026-04-01 |Add `tool-category: core` to llm_help tool for tree-based tool selector in llm-connect v0.1.43+ |
 |0.1.12 |2026-03-30 |Add `[[` `]]` literal brackets gotcha to tw-gotchas/filters — brackets are filter syntax delimiters, must use variables |

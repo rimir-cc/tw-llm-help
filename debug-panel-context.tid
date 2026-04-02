@@ -7,12 +7,11 @@ type: text/vnd.tiddlywiki
 
 \whitespace trim
 
-<$let ctx={{{ [<chatTiddler>get[llm-help-context]] }}} keys={{{ [<chatTiddler>get[llm-help-context]enlist-input[]] }}} count={{{ [<chatTiddler>get[llm-help-context]enlist-input[]count[]] }}}>
+<$let count={{{ [<chatTiddler>get[llm-help-context]enlist-input[]count[]] }}}>
 <%if [<count>compare:integer:gt[0]] %>
 <div class="llm-chat-debug-help-ctx">
-<strong><$text text=<<count>>/> active help context keys:</strong>
-<code class="llm-chat-debug-help-ctx-keys"><$list filter="[enlist<keys>sort[]]" variable="key"><$text text=<<key>>/>
-</$list></code>
+<strong><$text text=<<count>>/>&nbsp;active help context keys:</strong>
+<div class="llm-chat-debug-help-ctx-keys"><$list filter="[<chatTiddler>get[llm-help-context]enlist-input[]sort[]]" variable="key"><div><$text text=<<key>>/></div></$list></div>
 </div>
 <%else%>
 <em>(no help context active)</em>
