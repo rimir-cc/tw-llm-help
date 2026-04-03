@@ -36,13 +36,13 @@ The LLM reaches this page whether it navigates via `data-model` or `actions/crea
 !! Dynamic page (reading typed schema)
 
 ```
-title: $:/plugins/rimir/orga/llm-help/type-person
+title: $:/plugins/rimir/orga-data-model/llm-help/type-person
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: data-model/person
 llm-help-description: Person type — fields, constraints, creation, search
 type: text/vnd.tiddlywiki
 
-<$importvariables filter="[[$:/plugins/rimir/orga/llm-help/type-info-macro]]">
+<$importvariables filter="[[$:/plugins/rimir/orga-data-model/llm-help/type-info-macro]]">
 <<render-type-info "person">>
 </$importvariables>
 ```
