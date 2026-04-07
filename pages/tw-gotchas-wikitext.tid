@@ -4,7 +4,7 @@ title: $:/plugins/rimir/llm-help/pages/tw-gotchas-wikitext
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/wikitext
 llm-help-context: tw-gotchas
-llm-help-description: Wikitext markup pitfalls — $reveal fragmentation, code-body, comments, $let vs $set, p-wrapping
+llm-help-description: Wikitext markup pitfalls — $reveal fragmentation, code-body, comments, $let vs $set, p-wrapping, \define substitution migration
 llm-help-sort: 03
 type: text/vnd.tiddlywiki
 
@@ -142,3 +142,29 @@ Filtered transclusion `{{{...}}}` is valid inside widget attributes like `<$widg
 ```
 
 Rule: `<<procedure>>` calls only accept literal values and `<<variable>>` references. For computed arguments, always use `<$transclude $variable="name" arg={{{ filter }}}/>` instead.
+
+---
+
+9. `\define` substitution syntax does NOT work in `\procedure` or `\function`
+
+`\define` performs textual substitution BEFORE parsing: `$param$` inserts a parameter value, `$(varname)$` inserts an outer variable. `\procedure` and `\function` do NOT support either form — they become literal text.
+
+Never use `\define`. Always use `\procedure`, `\function`, or `\widget`. When migrating:
+
+```
+<!-- OLD — \define with $param$ and $(var)$ substitution -->
+\define my-state() $:/state/view/$(currentTiddler)$/mode
+\define my-filter(type) [rrt.type[$type$]sort[title]]
+
+<!-- NEW — \function with filter operators -->
+\function my-state() [<currentTiddler>addprefix[$:/state/view/]addsuffix[/mode]]
+\function my-filter(type) [rrt.type<__type__>sort[title]]
+```
+
+Migration rules by context:
+- **Computed paths** (`$:/state/foo/$(var)$/bar`): use `\function` with `addprefix`/`addsuffix`
+- **Parameter access** (`$param$`): use `<<param>>` in procedure bodies, `<__param__>` in filter expressions
+- **Nested macro refs** (`$(otherMacro)$`): use `\function` with `[function[otherMacro]]` chaining
+- **Filter string construction** (building `[title[$(var)$]]` for subfilter): inline backtick template at the call site — backtick templates (`` `...$(var)$...` ``) support `$(var)$` regardless of pragma type
+
+Exception: Inside backtick template strings (`` `...` ``), `$(var)$` substitution works with any pragma type. This is a separate mechanism from `\define`.

@@ -117,7 +117,7 @@ Clear all
 <%endif%>
 </$let>
 
-<div style="border-top: 1px solid #ddd; margin-top: 16px; padding-top: 12px;">
+<div style="border-top: 1px solid <<colour tiddler-border>>; margin-top: 16px; padding-top: 12px;">
 !! User Shortcuts
 <div class="rr-muted rr-small">
 Add quick-reference help pages for common tasks or use cases. These are visible to the LLM under the <code>shortcuts/</code> path.
