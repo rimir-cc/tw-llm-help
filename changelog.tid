@@ -4,6 +4,7 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.23 |2026-04-07 |Convert HTML heading to wikitext in settings page |
 |0.1.22 |2026-04-02 |Help tree debug panel — shows full help page hierarchy with path/description/context per node. Toggle to show hidden (context-filtered) pages greyed out. Reads active context from chat |
 |0.1.21 |2026-04-02 |Fix debug panel key display — use `$list` directly instead of `{{{ }}}` variable (first-result bug). Each key on its own line |
 |0.1.20 |2026-04-02 |Help context debug panel — read-only view of active help context keys, registered via `$:/tags/rimir/llm-connect/debug-panel` tag. Appears in llm-connect's debug menu when llm-help is installed |
