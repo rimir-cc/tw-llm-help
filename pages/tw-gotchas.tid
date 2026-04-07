@@ -20,5 +20,7 @@ Categories:
 - **wikitext** — Markup gotchas (`$reveal`, `code-body`, comments, `$let` vs `$set`)
 - **shadows** — Shadow tiddler discovery (`[all[tiddlers+shadows]...]`)
 - **slots** — `$slot`/`$fill` scope limitations, naming restrictions
+- **cascades** — ViewTemplateBodyFilter `:cascade` ordering, third-party plugins breaking the chain
+- **hooks** — Hook chain fragility (`return tiddler`), change event fallback, draft safety
 
-Navigate deeper: llm_help("tw-gotchas/titles"), llm_help("tw-gotchas/filters"), llm_help("tw-gotchas/filter-runs"), llm_help("tw-gotchas/wikitext"), llm_help("tw-gotchas/shadows"), llm_help("tw-gotchas/slots")
+Navigate deeper: llm_help("tw-gotchas/titles"), llm_help("tw-gotchas/filters"), llm_help("tw-gotchas/filter-runs"), llm_help("tw-gotchas/wikitext"), llm_help("tw-gotchas/shadows"), llm_help("tw-gotchas/slots"), llm_help("tw-gotchas/cascades"), llm_help("tw-gotchas/hooks")

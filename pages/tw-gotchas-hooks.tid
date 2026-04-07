@@ -1,0 +1,65 @@
+created: 20260407120000000
+modified: 20260407120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-hooks
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/hooks
+llm-help-context: tw-gotchas
+llm-help-description: TW hook chain breaks if any hook forgets return tiddler — use change event fallback
+llm-help-sort: 07
+type: text/vnd.tiddlywiki
+
+Hook Chain Fragility
+
+TW's `$tw.hooks.invokeHook` passes each hook's return value as input to the next hook. There is NO try/catch. If any hook returns `undefined` (forgetting `return tiddler`), all subsequent hooks silently receive `undefined` and fail.
+
+```javascript
+// BROKEN — breaks the chain for all hooks registered after this one
+$tw.hooks.addHook("th-deleting-tiddler", function(tiddler) {
+    doSomething(tiddler);
+    // Missing: return tiddler;
+});
+
+// CORRECT
+$tw.hooks.addHook("th-deleting-tiddler", function(tiddler) {
+    doSomething(tiddler);
+    return tiddler;
+});
+```
+
+Known offender: `sq/streams` plugin's `th-deleting-tiddler` hook.
+
+You cannot control hook registration order reliably (depends on startup module load order). So never rely solely on a hook for critical operations.
+
+Robust pattern — two-layer approach:
+
+1. **Hook** (best-effort): show confirm dialogs, record user decisions
+2. **Change event** (reliable fallback): `$tw.wiki.addEventListener("change", ...)` fires after every wiki store change, regardless of hooks
+
+```javascript
+// Snapshot approach: track state BEFORE deletion
+var snapshot = {};  // title → {data}
+
+// Keep snapshot updated via change event
+$tw.wiki.addEventListener("change", function(changes) {
+    $tw.utils.each(changes, function(change, title) {
+        if(!change.deleted) {
+            // Update snapshot for modified/added tiddlers
+        } else {
+            // Tiddler deleted — use snapshot to act
+            var info = snapshot[title];
+            delete snapshot[title];
+            if(info) { /* cleanup */ }
+        }
+    });
+});
+```
+
+Draft safety: when a user opens an editor and cancels, the draft tiddler (which inherits fields like `_canonical_uri` from the original) gets deleted. Always check for `draft.of` field:
+
+```javascript
+// In snapshot building — skip drafts
+var titles = $tw.wiki.filterTiddlers("[has[_canonical_uri]!has[draft.of]]");
+
+// In change event — skip drafts
+if(t && t.fields["draft.of"]) return;
+```

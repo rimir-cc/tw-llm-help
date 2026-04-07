@@ -1,0 +1,45 @@
+created: 20260407120000000
+modified: 20260407120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-cascades
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/cascades
+llm-help-context: tw-gotchas
+llm-help-description: ViewTemplateBodyFilter :cascade ordering — buggy third-party filters break subsequent entries
+llm-help-sort: 06
+type: text/vnd.tiddlywiki
+
+ViewTemplateBodyFilter Cascade Ordering
+
+The `:cascade` filter run prefix evaluates step filters sequentially. If a third-party plugin's cascade filter has a bug (error, side effect), it can silently prevent ALL subsequent cascade filters from matching.
+
+Symptom: your cascade filter works when tested alone but returns empty when run as part of the full chain:
+
+```
+<!-- Works alone -->
+{{{ [<currentTiddler>] :cascade[[$:/my/cascade/filter]get[text]] }}}
+
+<!-- Returns empty with all filters -->
+{{{ [<currentTiddler>] :cascade[all[shadows+tiddlers]tag[$:/tags/ViewTemplateBodyFilter]!is[draft]get[text]] }}}
+```
+
+Known offenders: `flibbles/graph`, `wikilabs`, `EvidentlyCube/AutoComplete` cascade filters have been observed to break the chain in TW 5.3.8.
+
+Fix: position your cascade filter FIRST, not last:
+
+```
+<!-- WRONG — last before default, vulnerable to broken earlier filters -->
+list-before: $:/config/ViewTemplateBodyFilters/default
+
+<!-- CORRECT — first in chain, runs before anything can break it -->
+list-before: $:/config/ViewTemplateBodyFilters/testcase
+```
+
+Also: `all[current]` is redundant in `:cascade` step filters. The cascade prefix already passes the tiddler title as input to each step filter:
+
+```
+<!-- Redundant -->
+[all[current]has[_thumbnail_uri]then[...]]
+
+<!-- Cleaner — works the same in :cascade context -->
+[has[_thumbnail_uri]then[...]]
+```
