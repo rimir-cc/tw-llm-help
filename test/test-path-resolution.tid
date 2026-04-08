@@ -1,0 +1,59 @@
+title: $:/plugins/rimir/llm-help/test/test-path-resolution
+description: Test _llm-help-at, _llm-help-root-page, _llm-help-child-segments, _llm-help-all-paths
+type: text/vnd.tiddlywiki-multiple
+tags: [[$:/tags/wiki-test-spec]]
+
+title: TestRoot
+tags: $:/tags/rimir/llm-help/page
+llm-help-path:
+type: text/vnd.tiddlywiki
+
+Root
++
+title: TestA
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tst-a
+llm-help-description: Topic A
+type: text/vnd.tiddlywiki
+
+A content
++
+title: TestASub1
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tst-a/sub1
+type: text/vnd.tiddlywiki
+
+Sub1
++
+title: TestASub2
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tst-a/sub2
+type: text/vnd.tiddlywiki
+
+Sub2
++
+title: TestB
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tst-b
+type: text/vnd.tiddlywiki
+
+B content
++
+title: Output
+
+\whitespace trim
+\function _llm-help-all-pages() [all[shadows+tiddlers]tag[$:/tags/rimir/llm-help/page]]
+\function _llm-help-ctx-match(page-ctx, ctx) [<page-ctx>enlist-input[]] :filter[<ctx>enlist-input[]prefix<currentTiddler>] +[first[]]
+\function _llm-help-ctx-pages(ctx) [function[_llm-help-all-pages]has[llm-help-context]] :filter[<ctx>minlength[1]] :filter[function[_llm-help-ctx-match],{!!llm-help-context},<ctx>minlength[1]]
+\function _llm-help-visible-pages(ctx) [function[_llm-help-all-pages]!has[llm-help-context]] [function[_llm-help-ctx-pages],<ctx>]
+\function _llm-help-root-page(ctx) [function[_llm-help-visible-pages],<ctx>!has[llm-help-path]] +[first[]]
+\function _llm-help-at(path, ctx) [function[_llm-help-visible-pages],<ctx>]:filter[<currentTiddler>get[llm-help-path]enlist-input[]match<path>] +[first[]]
+\function _llm-help-all-paths(ctx) [function[_llm-help-visible-pages],<ctx>get[llm-help-path]enlist-input[]]
+\function _llm-help-child-segments(prefix, ctx) [function[_llm-help-all-paths],<ctx>prefix<prefix>removeprefix<prefix>] :map[<currentTiddler>split[/]first[]] +[!is[blank]unique[]sort[]]
+at-a:<$text text={{{ [function[_llm-help-at],[tst-a],[]] }}}/>|at-sub1:<$text text={{{ [function[_llm-help-at],[tst-a/sub1],[]] }}}/>|at-none:<$text text={{{ [function[_llm-help-at],[nonexist],[]] }}}/>|root:<$text text={{{ [function[_llm-help-root-page],[]] }}}/>|ch-root:<$text text={{{ [function[_llm-help-child-segments],[],[]] +[join[,]] }}}/>|ch-a:<$text text={{{ [function[_llm-help-child-segments],[tst-a/],[]] +[join[,]] }}}/>|ch-b:<$text text={{{ [function[_llm-help-child-segments],[tst-b/],[]] +[join[,]] }}}/>|paths:<$text text={{{ [function[_llm-help-all-paths],[]] +[sort[]join[,]] }}}/>
++
+title: ExpectedResult
+
+<p>at-a:TestA|at-sub1:TestASub1|at-none:|root:TestRoot|ch-root:tst-a,tst-b|ch-a:sub1,sub2|ch-b:|paths:tst-a,tst-a/sub1,tst-a/sub2,tst-b</p>
++
+title: Narrative

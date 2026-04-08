@@ -1,0 +1,11 @@
+{
+    "description": "Test edition for llm-help",
+    "plugins": [
+        "tiddlywiki/jasmine",
+        "rimir/llm-help"
+    ],
+    "themes": [
+        "tiddlywiki/vanilla",
+        "tiddlywiki/snowwhite"
+    ]
+}

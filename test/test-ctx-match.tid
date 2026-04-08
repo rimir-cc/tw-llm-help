@@ -1,0 +1,16 @@
+title: $:/plugins/rimir/llm-help/test/test-ctx-match
+description: Test _llm-help-ctx-match context matching — exact, prefix, multi-key, empty
+type: text/vnd.tiddlywiki-multiple
+tags: [[$:/tags/wiki-test-spec]]
+
+title: Output
+
+\whitespace trim
+\function _llm-help-ctx-match(page-ctx, ctx) [<page-ctx>enlist-input[]] :filter[<ctx>enlist-input[]prefix<currentTiddler>] +[first[]]
+exact:<$text text={{{ [function[_llm-help-ctx-match],[a],[a]] }}}/>|no:<$text text={{{ [function[_llm-help-ctx-match],[a],[b]] }}}/>|pfx:<$text text={{{ [function[_llm-help-ctx-match],[tw],[tw-sub]] }}}/>|rev:<$text text={{{ [function[_llm-help-ctx-match],[tw-sub],[tw]] }}}/>|mpctx:<$text text={{{ [function[_llm-help-ctx-match],[a b],[a]] }}}/>|mctx:<$text text={{{ [function[_llm-help-ctx-match],[a],[b a]] }}}/>|ectx:<$text text={{{ [function[_llm-help-ctx-match],[a],[]] }}}/>|epctx:<$text text={{{ [function[_llm-help-ctx-match],[],[a]] }}}/>
++
+title: ExpectedResult
+
+<p>exact:a|no:|pfx:tw|rev:|mpctx:a|mctx:a|ectx:|epctx:</p>
++
+title: Narrative
