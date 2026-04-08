@@ -1,0 +1,77 @@
+created: 20260408120000000
+modified: 20260408120000000
+title: $:/plugins/rimir/llm-help/pages/tw-gotchas-kin-filter
+tags: $:/tags/rimir/llm-help/page
+llm-help-path: tw-gotchas/kin-filter
+llm-help-context: tw-gotchas
+llm-help-description: kin filter gotchas — direction semantics, depth off-by-one, global cache staleness, field must be title list
+llm-help-sort: 09
+type: text/vnd.tiddlywiki
+
+! Kin Filter Gotchas
+
+The `[kin[]]` filter (by bimlas) traverses parent-child trees. Syntax: `[kin:<field>:<direction>:<depth>[<operand>]]`.
+
+!! 1. Direction semantics are relative to the field, not the tree
+
+`from` follows the field value (child→parent), `to` finds things pointing to this title via the field (parent→children), `with` is both.
+
+```
+<!-- To find DESCENDANTS of a node (children, grandchildren, etc.) via parent field: -->
+[kin:parent:to[MyNode]]
+
+<!-- NOT: -->
+[kin:parent:from[MyNode]]
+<!-- ^^^ this finds ANCESTORS (parent, grandparent, etc.) -->
+```
+
+Mnemonic: `to` means "titles pointing TO this one via the field" = descendants. `from` means "where this title's field points FROM" = ancestors.
+
+!! 2. The base title is always included in results
+
+`[kin:parent:to[MyNode]]` returns MyNode itself plus all descendants. To exclude the base:
+
+```
+[kin:parent:to[MyNode]] -[<myNode>]
+```
+
+!! 3. Depth parameter is 1-indexed, 0 means unlimited
+
+`[kin:parent:to:1[MyNode]]` returns MyNode + its direct children (depth 1). There is no way to say "only depth 1 without the base" in a single operator — subtract the base separately.
+
+`[kin:parent:to:0[MyNode]]` and `[kin:parent:to[MyNode]]` are identical — both traverse the full tree.
+
+!! 4. Global cache — results can go stale
+
+The kin filter caches results globally per (baseTitle, fieldName, direction) tuple. The cache persists for the wiki session. If tiddlers are created/deleted/reparented, cached kin results may be stale until wiki reload.
+
+```
+<!-- After creating a new child of MyNode, [kin:parent:to[MyNode]]
+     may NOT include the new child until the page is refreshed -->
+```
+
+This primarily affects interactive scenarios (live editing + kin queries in the same session). For static rendering it is not a problem.
+
+!! 5. Field must contain a title list
+
+The traversed field (default: `tags`) must be a standard TiddlyWiki title list. If a field contains free text or malformed bracket syntax, kin silently skips it. Single-value fields like `parent` work fine since a bare title is a valid title list of one.
+
+!! 6. Default field is `tags`, not `parent`
+
+If you omit the field suffix, kin uses the `tags` field:
+
+```
+<!-- These are DIFFERENT: -->
+[kin[MyNode]]           <!-- traverses tags field -->
+[kin:parent[MyNode]]    <!-- traverses parent field -->
+```
+
+Always specify the field explicitly when working with non-tag hierarchies.
+
+!! 7. Combines poorly with sort — kin returns discovery order
+
+Results come back in traversal order (breadth-first-ish). If you need alphabetical or other sorting, add an explicit sort step:
+
+```
+[kin:parent:to[MyNode]] -[<myNode>] +[sort[caption]]
+```
