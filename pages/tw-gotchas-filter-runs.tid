@@ -4,7 +4,7 @@ title: $:/plugins/rimir/llm-help/pages/tw-gotchas-filter-runs
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/filter-runs
 llm-help-context: tw-gotchas
-llm-help-description: Filter run composition — ~, +, :filter scope, interleaving, conditional operators
+llm-help-description: Filter run composition — ~, +, :filter scope, :map single-result, interleaving, conditional operators
 llm-help-sort: 06
 type: text/vnd.tiddlywiki
 
@@ -123,7 +123,28 @@ Rule: When you need structured/grouped output, use `$list` nesting in wikitext. 
 
 ---
 
-5. Conditional filter operators don't exist — you can't toggle a filter step on/off
+5. `:map` returns only the FIRST result per input item — it is NOT a flat-map
+
+`:map` replaces each input title with the first output of the subfilter. If the subfilter produces multiple results, all but the first are silently dropped.
+
+```
+<!-- BROKEN — only the first person per team is returned -->
+[<jfTitle>get[default-participants]enlist-input[]]
+  :filter[get[rrt.type]match[team]]
+  :map[all[tiddlers]rrt.type[person]contains:team-member-of<currentTiddler>]
+<!-- If TeamA has 3 members, :map returns only the first one -->
+
+<!-- CORRECT — reverse the lookup: scan all candidates and :filter -->
+[all[tiddlers]rrt.type[person]!status[archived]]
+  :filter[<jfTitle>contains:default-participants{!!team-member-of}]
+<!-- Returns ALL persons whose team-member-of appears in the source list -->
+```
+
+Rule: When you need all results for each input (flat-map semantics), reverse the lookup direction. Instead of mapping over containers to find their members, scan all candidates and use `:filter` to check membership against the source list.
+
+---
+
+6. Conditional filter operators don't exist — you can't toggle a filter step on/off
 
 A common need: show all items when filter is "all", show only matching items otherwise. You cannot make a single filter operator conditional — there is no `[<condition>then[status[active]]]` that injects an operator.
 

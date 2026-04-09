@@ -16,7 +16,7 @@ Categories:
 
 - **titles** — Tiddler titles with spaces, double-bracket syntax, list fields
 - **filters** — Filter expression pitfalls (short-circuit, `:filter`, chaining, variables)
-- **filter-runs** — How `~`, `+`, `:filter`, `:map` interact across runs (else, pipe, scope, interleaving)
+- **filter-runs** — How `~`, `+`, `:filter`, `:map` interact across runs (else, pipe, scope, `:map` single-result, interleaving)
 - **wikitext** — Markup gotchas (`$reveal`, `code-body`, comments, `$let` vs `$set`)
 - **shadows** — Shadow tiddler discovery (`[all[tiddlers+shadows]...]`)
 - **slots** — `$slot`/`$fill` scope limitations, naming restrictions
