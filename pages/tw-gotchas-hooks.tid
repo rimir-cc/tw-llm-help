@@ -3,7 +3,7 @@ modified: 20260407120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-hooks
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/hooks
-llm-help-context: tw-gotchas
+llm-help-context: tw-gotchas/hooks
 llm-help-description: TW hook chain breaks if any hook forgets return tiddler — use change event fallback
 llm-help-sort: 07
 type: text/vnd.tiddlywiki

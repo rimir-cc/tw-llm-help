@@ -4,6 +4,7 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.29 |2026-04-13 |tw-gotchas sub-pages now use hierarchical `llm-help-context` values (`tw-gotchas/filters`, `tw-gotchas/shadows`, etc.) matching their `llm-help-path` — context selector tree is now expandable under `tw-gotchas`. Prefix-matching semantics unchanged (selecting child context still includes parent pages) |
 |0.1.28 |2026-04-09 |Add `:map` single-result gotcha to tw-gotchas/filter-runs — `:map` returns only first result per item, use reverse `:filter` lookup instead |
 |0.1.27 |2026-04-08 |Add tw-gotchas/kin-filter: direction semantics, base inclusion, depth, global cache, field default, sort order |
 |0.1.26 |2026-04-08 |Add wiki-based tests: ctx-match logic, path resolution, context-filtered visibility. Add test-edition for CI |
