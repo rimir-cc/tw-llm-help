@@ -40,7 +40,7 @@ This means help page content must use server-compatible widgets (`$list`, `$let`
 
 !! `$importvariables` for cross-plugin functions
 
-Dynamic help pages use `<$importvariables filter="[[$:/plugins/rimir/typed/functions]]">` to pull in filter functions from other plugins. This is necessary because `\import` only accepts literal tiddler references, not computed filters. Despite being deprecated, `$importvariables` remains the only way to dynamically scope functions at render time.
+Dynamic help pages can use `<$importvariables filter="[[$:/plugins/your-plugin/functions]]">` to pull in filter functions from another plugin. This is necessary because `\import` only accepts literal tiddler references, not computed filters. Despite being deprecated, `$importvariables` remains the only way to dynamically scope functions at render time.
 
 </$fill>
 </$transclude>

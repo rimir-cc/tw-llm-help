@@ -111,11 +111,11 @@ Building a flat list like `section1 item1 item2 section2 item3` where sections a
   </$list>
 </$list>
 
-<!-- CORRECT — if you must use vtabs, pre-build the element list with $vars -->
+<!-- CORRECT — if you must use a tabbed element list widget, pre-build the list with $vars -->
 <$vars elements={{{
   [[sec:group1]] [source1[group1]] [[sec:group2]] [source2[group2]] +[join[ ]]
 }}}>
-  <$transclude $tiddler="$:/plugins/rimir/components/vtabs" elements=<<elements>> .../>
+  <$transclude $tiddler="$:/plugins/your-plugin/tabs" elements=<<elements>> .../>
 </$vars>
 ```
 
