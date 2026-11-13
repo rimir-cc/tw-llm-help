@@ -120,7 +120,7 @@ Clear all
 <div style="border-top: 1px solid <<colour tiddler-border>>; margin-top: 16px; padding-top: 12px;">
 !! Default context
 <div class="rr-muted rr-small">
-Context keys (space-separated) the <code>llm_help</code> tool uses when the caller passes none — e.g. llm-inline jobs. Chats pass their own selection.
+Context keys (space-separated) the <code>llm_help</code> tool uses when the caller passes none — e.g. llm-inline jobs. New llm-connect chats also start with these keys selected; each chat keeps its own selection afterwards.
 </div>
 
 <$edit-text tiddler="$:/config/rimir/llm-help/default-context" tag="input" placeholder="e.g. tw-gotchas"/>

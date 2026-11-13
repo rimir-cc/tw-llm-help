@@ -4,6 +4,7 @@ title: $:/plugins/rimir/llm-help/changelog
 type: text/vnd.tiddlywiki
 
 |!Version |!Date |!Changes |
+|0.1.33 |2026-11-13 |Settings: default-context description notes that new llm-connect chats (0.1.58+) also start with these keys selected |
 |0.1.32 |2026-11-13 |Tool description now tells models to consult `llm_help` before writing TiddlyWiki wikitext/filters/widgets; new `$:/config/rimir/llm-help/default-context` (default `tw-gotchas`) as last fallback in `_llm-help-resolve-ctx` (editable in settings); empty active-context no longer short-circuits the fallback |
 |0.1.31 |2026-11-13 |Sync tw-gotchas pages with verified gotcha corpus: remove disproved claims (`:filter` negation, dotted vars, slot colons, `code-body` disabling pragmas, `<now>` in filters); fix broken examples (`enlist` with brackets, nested `<<proc arg:<<v>>>>`, dynamic filter builder, JSON chain); add subtract-with-operator, bare-title regex, multi-arg `jsonget`, `compare:integer`, `removeprefix`, trailing newline, dates/UTC, `:map:flat`, pragma placement, block mode, empty `<%if%>` branch, attribute/transclusion context, stylesheet dash, kin operand semantics |
 |0.1.30 |2026-04-27 |Declare `doc-template` as soft-dependent in plugin.info; genericize cross-plugin examples in docs (use `your-plugin/*` placeholders instead of typed/components/orga-data-model) |
