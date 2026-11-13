@@ -118,6 +118,15 @@ Clear all
 </$let>
 
 <div style="border-top: 1px solid <<colour tiddler-border>>; margin-top: 16px; padding-top: 12px;">
+!! Default context
+<div class="rr-muted rr-small">
+Context keys (space-separated) the <code>llm_help</code> tool uses when the caller passes none — e.g. llm-inline jobs. Chats pass their own selection.
+</div>
+
+<$edit-text tiddler="$:/config/rimir/llm-help/default-context" tag="input" placeholder="e.g. tw-gotchas"/>
+</div>
+
+<div style="border-top: 1px solid <<colour tiddler-border>>; margin-top: 16px; padding-top: 12px;">
 !! User Shortcuts
 <div class="rr-muted rr-small">
 Add quick-reference help pages for common tasks or use cases. These are visible to the LLM under the <code>shortcuts/</code> path.

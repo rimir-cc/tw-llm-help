@@ -1,0 +1,22 @@
+title: $:/plugins/rimir/llm-help/test/test-resolve-ctx
+description: _llm-help-resolve-ctx fallback order: param, __helpContext, active-context, default-context config
+type: text/vnd.tiddlywiki-multiple
+tags: [[$:/tags/wiki-test-spec]]
+
+title: $:/config/rimir/llm-help/default-context
+
+tw-gotchas
++
+title: Output
+
+\whitespace trim
+\function _llm-help-resolve-ctx(ctx) [<ctx>minlength[1]] ~[<__helpContext>minlength[1]] ~[{$:/temp/rimir/llm-help/active-context}trim[]minlength[1]] ~[{$:/config/rimir/llm-help/default-context}trim[]]
+param:<$text text={{{ [function[_llm-help-resolve-ctx],[p-ctx]] }}}/>|var:<$let __helpContext="v-ctx"><$text text={{{ [function[_llm-help-resolve-ctx],[]] }}}/></$let>|default:<$text text={{{ [function[_llm-help-resolve-ctx],[]] }}}/>
++
+title: ExpectedResult
+
+<p>param:p-ctx|var:v-ctx|default:tw-gotchas</p>
++
+title: Narrative
+
+The active-context tiddler case is covered by the browser tests; the default-context config is the last fallback.

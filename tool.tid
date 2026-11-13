@@ -3,7 +3,7 @@ modified: 20260327120000000
 title: $:/plugins/rimir/llm-help/tool
 tags: $:/tags/rimir/llm-connect/tool
 tool-name: llm_help
-tool-description: Browse the hierarchical help system to find wiki-specific documentation. Call with no path to see top-level topics. Call with a path to navigate deeper. Each level returns subtopics with descriptions so you can find the information you need for your current task.
+tool-description: Help pages for this wiki: TiddlyWiki wikitext, filter and widget gotchas plus plugin-specific how-tos. Consult it before writing non-trivial TiddlyWiki wikitext, filters or widgets, and when a task involves this wiki's plugins or data model. Call with no path to see top-level topics; call with a path from a listing to go deeper.
 tool-schema: {"type":"object","properties":{"path":{"type":"string","description":"Help path to navigate. Empty or omitted for root. Use paths from subtopic listings, e.g. 'data-model', 'data-model/person/create'"},"context":{"type":"string","description":"Optional context override (space-separated keys). Usually set automatically by the environment."}},"required":[]}
 tool-mode: read
 tool-category: core

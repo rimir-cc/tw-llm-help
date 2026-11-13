@@ -49,7 +49,7 @@ Virtual parent nodes are synthesized automatically when children exist but no ex
 
 Context uses hierarchical prefix matching: a page is visible if it has no `llm-help-context` (always visible) or if any of its context keys are a prefix of any active context key. For example, active context `rimir/appify` makes pages with context `rimir/appify`, `rimir/appify/channels`, or `rimir/appify/views` visible.
 
-For tool calls, active context comes from `$:/temp/rimir/llm-help/active-context` (synced from the per-chat `llm-help-context` field before each tool execution) or the tool's optional `context` parameter. The settings browser uses its own `$:/state/rimir/llm-help/browser/context` tiddler (defaults to all keys, independent from chats).
+For tool calls, the active context is resolved in this order: the tool's optional `context` parameter, the caller's `__helpContext` variable (llm-connect passes `helpContext`), `$:/temp/rimir/llm-help/active-context` (synced from the per-chat `llm-help-context` field before each tool execution), and finally `$:/config/rimir/llm-help/default-context` (default `tw-gotchas`). The settings browser uses its own `$:/state/rimir/llm-help/browser/context` tiddler (defaults to all keys, independent from chats).
 
 !! Dynamic content
 
