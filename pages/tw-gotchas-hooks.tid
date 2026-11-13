@@ -1,5 +1,5 @@
 created: 20260407120000000
-modified: 20260407120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-hooks
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/hooks
@@ -26,7 +26,7 @@ $tw.hooks.addHook("th-deleting-tiddler", function(tiddler) {
 });
 ```
 
-Known offender: `sq/streams` plugin's `th-deleting-tiddler` hook.
+Known offender (older versions): `sq/streams` plugin's `th-deleting-tiddler` hook.
 
 You cannot control hook registration order reliably (depends on startup module load order). So never rely solely on a hook for critical operations.
 

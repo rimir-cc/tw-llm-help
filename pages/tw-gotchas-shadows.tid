@@ -1,5 +1,5 @@
 created: 20260329120000000
-modified: 20260329120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-shadows
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/shadows
@@ -19,6 +19,8 @@ Plugin-bundled tiddlers are "shadow" tiddlers. The default `[tag[]]` operator on
 <!-- CORRECT — includes both real and shadow tiddlers -->
 [all[tiddlers+shadows]tag[$:/tags/MyTag]]
 ```
+
+The same applies in JavaScript: `$tw.wiki.filterTiddlers("[tag[X]]")` skips shadows — use `[all[tiddlers+shadows]tag[X]]` there too.
 
 When to use `[all[tiddlers+shadows]...]`:
 

@@ -1,5 +1,5 @@
 created: 20260329120000000
-modified: 20260329120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-titles
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/titles
@@ -18,7 +18,7 @@ When brackets are REQUIRED:
 - **List fields** (tags, list): `[[Tag One]] [[Tag Two]]` — without brackets, this is 4 separate tags
 - **`$list` filter parameter**: `filter="[[My Tiddler]]"` — bare `My Tiddler` is two separate titles
 - **Tool calls** (`create_tiddler`, `set_field`, etc.): title parameter must be the exact title string, but any filter-based lookup needs brackets
-- **`enlist` / `enlist-input`**: These split on spaces — `enlist[[My Tiddler]]` returns two items `My` and `Tiddler`
+- **`enlist` / `enlist-input`**: These split on spaces — a list string `alpha My Tiddler` gives three items. Bracket multi-word titles inside the list string
 - **`tag[]` operator**: `[tag[My Tag]]` works (operator parameter is a single string), but listing results in a `tags` field needs brackets: `[[My Tag]] [[Other Tag]]`
 
 When brackets are NOT needed:
@@ -53,10 +53,13 @@ tags: [[Tag One]] [[Tag Two]]
 <$list filter="[enlist[alpha beta My Tiddler]]">
 <!-- produces: alpha, beta, My, Tiddler (4 items) -->
 
-<!-- CORRECT — use enlist with proper bracketing -->
-<$list filter="[enlist[alpha beta [[My Tiddler]]]]">
+<!-- CORRECT — keep the bracketed list in a variable (an operand cannot contain ]) -->
+<$let items="alpha beta [[My Tiddler]]">
+<$list filter="[enlist<items>]">
 <!-- produces: alpha, beta, My Tiddler (3 items) -->
 ```
+
+Building such a list string from a filter: `+[join[ ]]` loses the brackets, so `Two Words` comes back as two titles. Use `+[format:titlelist[]join[ ]]` — it brackets multi-word titles.
 
 Best practice: When in doubt, ALWAYS use brackets around titles. `[[simple-title]]` works fine even when brackets aren't strictly needed.
 

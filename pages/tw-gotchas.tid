@@ -1,5 +1,5 @@
 created: 20260329120000000
-modified: 20260329120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas
@@ -15,13 +15,13 @@ Hard-won lessons about TiddlyWiki syntax and behavior. Read these BEFORE writing
 Categories:
 
 - **titles** — Tiddler titles with spaces, double-bracket syntax, list fields
-- **filters** — Filter expression pitfalls (short-circuit, `:filter`, chaining, variables)
-- **filter-runs** — How `~`, `+`, `:filter`, `:map` interact across runs (else, pipe, scope, `:map` single-result, interleaving)
-- **wikitext** — Markup gotchas (`$reveal`, `code-body`, comments, `$let` vs `$set`)
+- **filters** — Filter expression pitfalls (short-circuit, subtract runs, `get[]` emptiness, `\function`, JSON, dates, `compare:integer`)
+- **filter-runs** — How `~`, `+`, `:filter`, `:map` interact across runs (else, pipe, scope, `:map` vs `:map:flat`, interleaving, dynamic filters)
+- **wikitext** — Markup gotchas (`$reveal`, pragma placement, comments, block mode, `<%if%>`, procedure args, attributes, `thisTiddler`, stylesheet dashes)
 - **shadows** — Shadow tiddler discovery (`[all[tiddlers+shadows]...]`)
-- **slots** — `$slot`/`$fill` scope limitations, naming restrictions
+- **slots** — `$slot`/`$fill` scope limitations
 - **cascades** — ViewTemplateBodyFilter `:cascade` ordering, third-party plugins breaking the chain
 - **hooks** — Hook chain fragility (`return tiddler`), change event fallback, draft safety
-- **kin-filter** — `[kin[]]` tree traversal: direction semantics, cache staleness, depth off-by-one
+- **kin-filter** — `[kin[]]` tree traversal: direction semantics, operand vs input, cache staleness, depth
 
 Navigate deeper: llm_help("tw-gotchas/titles"), llm_help("tw-gotchas/filters"), llm_help("tw-gotchas/filter-runs"), llm_help("tw-gotchas/wikitext"), llm_help("tw-gotchas/shadows"), llm_help("tw-gotchas/slots"), llm_help("tw-gotchas/cascades"), llm_help("tw-gotchas/hooks"), llm_help("tw-gotchas/kin-filter")

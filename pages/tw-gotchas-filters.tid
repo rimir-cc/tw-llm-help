@@ -1,10 +1,10 @@
 created: 20260329120000000
-modified: 20260329120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-filters
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/filters
 llm-help-context: tw-gotchas/filters
-llm-help-description: Filter pitfalls — no short-circuit, :filter negation, get[] emptiness, dot variables, \function syntax
+llm-help-description: Filter pitfalls — no short-circuit, subtracting with operators, get[] emptiness, \function syntax, bare-title regex trap, JSON ops, compare:integer, dates
 llm-help-sort: 02
 type: text/vnd.tiddlywiki
 
@@ -26,21 +26,19 @@ The `~` operator means "use next run only if previous returned empty".
 
 ---
 
-2. `:filter` does not support `!` negation
+2. `-[operator...]` does NOT subtract from the accumulated result
 
-Negated operators like `!has[field]` and `!is[blank]` silently fail inside `:filter` — they produce no output, filtering out every item.
+`-[<var>]` and `-[[literal]]` subtract those values — fine. But when the run starts with an OPERATOR, its source is all tiddlers, not the accumulated result. `-[prefix[min:]]` subtracts every wiki title starting with `min:` (usually none) — it does not remove matching accumulated items.
 
 ```
-<!-- BROKEN — !has silently returns nothing, all items filtered out -->
-[tag[X]]:filter[<currentTiddler>!has[my-field]]
+<!-- BROKEN — subtracts nothing -->
+[[min:3]] [[x]] -[prefix[min:]]
 
-<!-- CORRECT — chain !has directly in the run -->
-[tag[X]!has[my-field]]
-
-<!-- CORRECT — if you must use :filter, invert the logic -->
-[tag[X]]:filter[<currentTiddler>get[my-field]is[blank]then[yes]]
-<!-- (but this also has issues — see gotcha #3) -->
+<!-- CORRECT — :filter tests each accumulated item -->
+[[min:3]] [[x]] :filter[!prefix[min:]]
 ```
+
+Negated operators (`!has[...]`, `!prefix[...]`, `!is[...]`) work fine inside `:filter`.
 
 ---
 
@@ -60,32 +58,39 @@ Negated operators like `!has[field]` and `!is[blank]` silently fail inside `:fil
 
 ---
 
-4. Variable names with dots don't work in `<>` syntax
+4. Bare `[a/b/c]` is NOT a title — it parses as operator `a` with regexp `/b/c/`
 
-`<f.status>` in a filter does NOT resolve a variable named `f.status`. The dot breaks variable resolution.
+A single-bracket run containing slashes is read as `[operator/regexp/]`. A subtraction like `-[a/b/c]` silently does nothing. The warning `Filter <op> has a deprecated regexp operand` naming an operator you never wrote is the giveaway.
 
 ```
 <!-- BROKEN -->
-<$let f.status="active">[<f.status>match[active]]</$let>
+[all[tiddlers]] -[a/b/c]
 
-<!-- CORRECT — use camelCase or hyphens -->
-<$let fStatus="active">[<fStatus>match[active]]</$let>
+<!-- CORRECT — double brackets for a title literal, or a variable -->
+[all[tiddlers]] -[[a/b/c]]
 ```
 
 ---
 
-5. `\function` body is single-line only
+5. `\function` body is single-line — unless you close it with `\end`
 
-Everything after `\function name(params)` on the SAME line is the filter. Continuation lines become visible body text.
+Everything after `\function name(params)` on the SAME line is the filter. If the rest of the line is blank, the body runs until a `\end` line; without `\end`, the function is empty and every later pragma leaks into the tiddler body as text.
 
 ```
-<!-- BROKEN — line 2 is body text, not part of the function -->
+<!-- BROKEN — no \end: empty function, line 2 becomes body text -->
 \function myFunc()
   [all[tiddlers]tag[X]]
 
 <!-- CORRECT — entire filter on one line -->
 \function myFunc() [all[tiddlers]tag[X]] :filter[get[status]match[active]]
+
+<!-- CORRECT — multi-line with \end -->
+\function myFunc()
+[all[tiddlers]tag[X]] :filter[get[status]match[active]]
+\end
 ```
+
+Pragmas (`\function`, `\procedure`, `\import`, …) only register at the TOP of a tiddler, before any content.
 
 ---
 
@@ -94,7 +99,7 @@ Everything after `\function name(params)` on the SAME line is the filter. Contin
 After `function[name]`, the `]]` looks like a closing run. Chaining operators AFTER `]]` puts them outside the run.
 
 ```
-<!-- BROKEN — count[] is outside the run -->
+<!-- BROKEN — "Filter error: Missing [" -->
 [function[myFunc]]count[]
 
 <!-- CORRECT — chain inside the same run -->
@@ -106,74 +111,95 @@ After `function[name]`, the `]]` looks like a closing run. Chaining operators AF
 
 ---
 
-7. `<now>` vs `now[]` vs `<<now>>`
+7. Dates: `<now>` writes LOCAL time, `format:date` reads stored dates as UTC
 
-- `<now>` in a filter — NOT a standard variable, produces wrong results
-- `<<now "DDth MMM YYYY">>` — standard TW macro for display
-- For filter comparison: capture into a variable first with `$let`
+- `<<now "DDth MMM YYYY">>` — display
+- `[<now "YYYY0MM0DD">]` — works inside filters; capture into a variable with `$let` for comparisons
+- To STORE a date in a field, use the `[UTC]` prefix. Without it the digits are local time, and every later `format:date` display is shifted by the timezone offset.
+- `format:date` tokens: `DDD` = long day name ("Monday", locale-dependent), `ddd` = short name, `dddd` = weekday number Mon=1..Sun=7. `MM` is NOT zero-padded — use `0MM`.
 
 ```
-<!-- Display -->
-<<now "DDth MMM YYYY">>
-
 <!-- Filter comparison -->
-<$let today={{{[<now YYYY0MM0DD>]}}}>
+<$let today={{{ [<now "YYYY0MM0DD">] }}}>
   [<today>compare:date:gt[20260101]]
 </$let>
+
+<!-- Storing a timestamp -->
+<$action-setfield due={{{ [<now "[UTC]YYYY0MM0DD0hh0mm0ss0XXX">] }}}/>
 ```
 
 ---
 
 8. `[[` and `]]` cannot be used as literal strings in filters
 
-Double square brackets are filter syntax delimiters (title literals). You cannot produce them via `addprefix` or `addsuffix` inside a filter — they get interpreted as filter syntax, not as literal characters.
+Brackets are filter syntax. You cannot produce them via `addprefix`/`addsuffix` operands — not even inside backtick templates. Store them in variables or fields and reference those.
 
 ```
 <!-- BROKEN — [[ and ]] are parsed as filter delimiters -->
 [<title>addprefix[[[]addsuffix[]]]]
 
-<!-- CORRECT — store brackets in variables, then reference them -->
+<!-- CORRECT — brackets in variables -->
 <$let ob="[[" cb="]]"
   wrapped={{{ [<title>addprefix<ob>addsuffix<cb>] }}}>
-  <!-- wrapped = "[[My Tiddler]]" as a literal string -->
 </$let>
 ```
 
-This commonly comes up when building filter expressions as strings (e.g., for `allowFilter` or dynamic `$list` filters) where tiddler titles need `[[bracket]]` wrapping to handle spaces.
+To turn a list of titles into a re-enlistable string, use `+[format:titlelist[]join[ ]]` — it adds `[[…]]` only where needed (see tw-gotchas/titles).
 
 ---
 
 9. `subfilter` with literal filter operands — nested brackets break parsing
 
-`[subfilter[tag[sensitive]]]` does NOT work. The parser sees `[subfilter[tag[sensitive]` as the operand and `]]` as the closing brackets, producing a malformed filter.
+`[subfilter[tag[sensitive]]]` does NOT work — the operand ends at the first `]`.
 
 ```
-<!-- BROKEN — nested brackets confuse the parser -->
+<!-- BROKEN -->
 [subfilter[tag[sensitive]]]
 
-<!-- CORRECT — use {tiddler-reference} to read the filter from a tiddler's text field -->
+<!-- CORRECT — {tiddler-reference} -->
 [subfilter{$:/config/my-protection-filter}]
 
-<!-- CORRECT — use <variable> if filter is in a variable -->
+<!-- CORRECT — <variable> -->
 <$let myFilter="[tag[sensitive]]">
   [subfilter<myFilter>]
 </$let>
 ```
 
-This applies to any operator that takes a filter expression as its operand (`subfilter`, `filter`, `reduce`, `map`, etc.). Always use indirection via `{tiddler}` or `<variable>` — never embed a filter literally inside `[]` brackets.
+This applies to any operator that takes a filter as its operand (`subfilter`, `filter`, `reduce`, `map`, …). Same trap for any operand that contains `]`, e.g. a regexp with `[0-9]`: put it in a tiddler field and use `regexp{tiddler!!field}`.
 
 ---
 
-10. `jsonget` chain fails on array items — use `jsonextract` first
+10. JSON: chained `jsonget`/`jsonindexes` don't compose — use the multi-argument form
 
-When iterating a JSON array with `:map`, chaining `jsonget<currentTiddler>jsonget[field]` silently returns empty. The second `jsonget` doesn't receive the sub-object. Use `jsonextract` to extract the sub-object, then `jsonget` on the result:
+When iterating a JSON array with `:map`, chaining `jsonget<currentTiddler>jsonget[id]` silently returns empty. Pass the whole path to ONE operator instead:
 
 ```
-<!-- BROKEN — jsonget<idx>jsonget[id] returns empty for every item -->
+<!-- BROKEN — returns empty for every item -->
 [<cache>get[text]jsonindexes[]] :map[<cache>get[text]jsonget<currentTiddler>jsonget[id]]
 
-<!-- CORRECT — jsonextract gets the sub-object, then jsonget reads the field -->
-[<cache>get[text]jsonindexes[]] :map:flat[<cache>get[text]jsonextract<currentTiddler>jsonget[id]]
+<!-- CORRECT — multi-argument jsonget -->
+[<cache>get[text]jsonindexes[]] :map[<cache>get[text]jsonget<currentTiddler>,[id]]
+
+<!-- Nested arrays: jsonindexes also takes a path -->
+[<tid>get[data]jsonindexes<idx>,[items]]
 ```
 
-Note the `:flat` suffix on `:map` — required when the mapped expression returns a single value per item.
+Deleting an array element with `jsonset[<idx>]` (no value) turns the array into an object with `"0"`, `"2"` keys — rebuild the array from the remaining elements instead. When writing JSON into a field, use compact JSON (no newlines) — a newline in a non-text field makes TW save the tiddler as `.json` instead of `.tid`.
+
+---
+
+11. `compare:integer` treats non-numbers as EQUAL to everything
+
+`parseInt("abc")` is `NaN`, and TW's comparison falls through to "equal". So `[[abc]compare:integer:gteq[0]]` and `[[abc]compare:integer:eq[5]]` both KEEP "abc". Never use `compare:integer` to validate numeric input — use `regexp` with a digits pattern stored in a field.
+
+---
+
+12. `removeprefix`/`removesuffix` DROP non-matching titles
+
+`[[a.md]] [[b.txt]] +[removesuffix[.md]]` returns only `a` — `b.txt` is dropped, not passed through. Select first, then strip: `:filter[suffix[.md]] :map[removesuffix[.md]]`.
+
+---
+
+13. Config tiddler text keeps the file's trailing newline
+
+A `.tid` config body like `|` has text `"|\n"`. Using it as an operand (`split`, `match`, `removeprefix`, …) silently fails. Chain `trim[]` when reading config text: `[[$:/config/x]get[text]trim[]]`.

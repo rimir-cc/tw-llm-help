@@ -1,10 +1,10 @@
 created: 20260329120000000
-modified: 20260329120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-wikitext
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/wikitext
 llm-help-context: tw-gotchas/wikitext
-llm-help-description: Wikitext markup pitfalls — $reveal fragmentation, code-body, comments, $let vs $set, p-wrapping, \define substitution migration
+llm-help-description: Wikitext markup pitfalls — $reveal fragmentation, pragma placement, comments, $let vs $set, block mode, <%if%> traps, procedure arguments, \define migration, attributes, transclusion context, stylesheet dashes
 llm-help-sort: 03
 type: text/vnd.tiddlywiki
 
@@ -33,20 +33,21 @@ Key principle: Always keep HTML structure intact within a single widget scope. U
 
 ---
 
-2. `code-body: yes` disables pragma parsing
+2. Pragmas only work at the TOP of a tiddler — and an `\import`ed tiddler must not START with `\import`
 
-With `code-body: yes`, TW treats the entire body as literal content — `\import`, `\procedure`, `\function` at the top are NOT parsed as pragmas. They become visible text.
+`\procedure`, `\function`, `\widget`, `\import` only register before any content. Once a normal line (even a heading) appears, later pragmas are body text and the procedure silently doesn't exist.
 
-- **Use `code-body: yes`** for tiddlers with NO pragmas (simple templates, pure HTML/wikitext)
-- **Omit `code-body: yes`** if the tiddler uses `\import`, `\procedure`, `\function`, or any pragma
+When tiddler B does `\import [[A]]`, TW collects A's definitions only until the first non-definition. If A's first line is itself `\import`, NONE of A's procedures reach B. Put `\import` at the call site, never at the top of a shared-definitions tiddler.
 
-Symptom: headings render as literal `!! Title` because a preceding `\import` wasn't consumed as a pragma.
+`\* ... *\` (JS module header style) is not a comment either — it ends pragma processing at that line.
+
+Note: `code-body: yes` only changes how the tiddler is DISPLAYED in the story river; it does not stop pragma parsing. To really disable parsing use `type: text/plain`.
 
 ---
 
 3. `<%-- --%>` is NOT a valid comment
 
-TW has NO wikitext comment syntax `<%-- ... --%>`. This renders as literal text. The `<%if%>` / `<%else%>` / `<%endif%>` conditional syntax exists, but there is no comment variant.
+TW has NO wikitext comment syntax `<%-- ... --%>`. This renders as literal text. HTML comments `<!-- -->` are stripped. The `<%if%>` / `<%else%>` / `<%endif%>` conditional syntax exists, but there is no comment variant.
 
 ```
 <!-- BROKEN — renders as visible text -->
@@ -76,7 +77,13 @@ TW has NO wikitext comment syntax `<%-- ... --%>`. This renders as literal text.
 
 5. TW wraps inline wikitext in `<p>` tags
 
-When wikitext content isn't in block mode, TW wraps it in `<p>`. This matters for test comparisons and layout. Use `$mode="block"` on `$transclude` when you need block-level rendering without `<p>` wrappers.
+When wikitext content isn't in block mode, TW wraps it in `<p>`. This matters for test comparisons and CSS child selectors (`.a > .b` breaks when a `<p>` sits in between).
+
+Procedures render in INLINE mode by default: `<<proc>>`, `<$macrocall>` and `<$transclude $variable="proc"/>` show headings (`!!`) and lists (`*`) as literal text. For block output use:
+
+```
+<$transclude $variable="proc" $mode="block"/>
+```
 
 ---
 
@@ -100,6 +107,8 @@ Action widgets inside `<%else%>` branches are NOT reachable by `Widget.invokeAct
 ```
 
 Read-only rendering (not actions) works fine with `<%if%>`.
+
+Related: never leave the THEN branch empty. `<%if [<x>match[yes]]%><%else%>BODY<%endif%>` renders the matched value (`yes`) as text when the condition is true. Invert the condition instead: `<%if [<x>match[no]]%>BODY<%endif%>`.
 
 ---
 
@@ -135,13 +144,15 @@ Filtered transclusion `{{{...}}}` is valid inside widget attributes like `<$widg
 <!-- CORRECT — use $transclude to call the procedure with computed args -->
 <$transclude $variable="my-procedure" arg={{{ [<x>get[field]] }}}/>
 
-<!-- CORRECT — or pre-compute with $let -->
+<!-- CORRECT — or let the procedure read the variable from the caller's scope -->
 <$let val={{{ [<x>get[field]] }}}>
-<<my-procedure arg:<<val>>>>
+<<my-procedure>>   <!-- procedure body uses <<val>> directly -->
 </$let>
 ```
 
-Rule: `<<procedure>>` calls only accept literal values and `<<variable>>` references. For computed arguments, always use `<$transclude $variable="name" arg={{{ filter }}}/>` instead.
+Also: positional arguments are LITERAL text. `<<show myvar>>` passes the string `myvar`, not its value. And `<<show <<myvar>>>>` breaks the parser and leaks closing tags as text — never nest `<< >>`.
+
+Rule: `<<procedure>>` calls only accept literal values. For computed arguments, always use `<$transclude $variable="name" arg={{{ filter }}}/>` instead.
 
 ---
 
@@ -168,3 +179,49 @@ Migration rules by context:
 - **Filter string construction** (building `[title[$(var)$]]` for subfilter): inline backtick template at the call site — backtick templates (`` `...$(var)$...` ``) support `$(var)$` regardless of pragma type
 
 Exception: Inside backtick template strings (`` `...` ``), `$(var)$` substitution works with any pragma type. This is a separate mechanism from `\define`.
+
+---
+
+10. Widget attributes cannot concatenate
+
+An attribute is ONE of `"literal"`, `<<variable>>`, `{{transclusion}}`, `{{{ filter }}}` or a backtick template. `tiddler=<<base>>/suffix` keeps only `<<base>>`.
+
+```
+<!-- BROKEN -->
+<$link to=<<base>>/child/>
+
+<!-- CORRECT -->
+<$link to={{{ [<base>addsuffix[/child]] }}}/>
+<$link to=`$(base)$/child`/>
+```
+
+A `{{{ filter }}}` attribute keeps only the FIRST result. Chain `+[format:titlelist[]join[ ]]` to pass a whole list.
+
+Textref braces need a literal title: `{{<<var>>}}` does not work. Use `{{{ [<var>get[text]] }}}` (or `get[field]`).
+
+---
+
+11. `<<var>>` output is re-parsed as wikitext
+
+A value like `$:/config/x` printed with `<<var>>` becomes a link (system-link syntax). Print raw values with `<$text text=<<var>>/>`. Attribute values (`tiddler=<<var>>`) are not re-parsed.
+
+---
+
+12. Widgets and HTML tags must nest cleanly
+
+A `<$let>` opened inside a `<div>` must close inside it. Crossing boundaries (`<div><$let>…</div></$let>`) prints `</div>` as literal text. Wrap the whole HTML structure in the widget instead.
+
+---
+
+13. `$transclude $tiddler=` sets `thisTiddler`, NOT `currentTiddler` — and extra attributes are not variables
+
+Inside `<$transclude $tiddler="X"/>`, `<currentTiddler>` is still the CALLER's tiddler; `<thisTiddler>` is X. Use `<$tiddler tiddler="X">` when you need currentTiddler to change.
+
+Extra attributes like `<$transclude $tiddler="X" mode-flag="yes"/>` are NOT readable as `<<mode-flag>>` in X unless X declares `\parameters (mode-flag)`. Pass context with an outer `<$let>` instead.
+
+---
+
+14. Stylesheet tiddlers: `--` turns into an en-dash
+
+Wikitext stylesheets (`$:/tags/Stylesheet`, default type) run typography rules, so `var(--accent)` becomes `var(–accent)` and silently breaks. Put `\rules except dash` at the top of the stylesheet body.
+

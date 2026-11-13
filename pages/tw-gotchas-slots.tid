@@ -1,30 +1,20 @@
 created: 20260329120000000
-modified: 20260329120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-slots
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/slots
 llm-help-context: tw-gotchas/slots
-llm-help-description: $slot/$fill scope limitations — no colons in names, procedure scope, @scope CSS
+llm-help-description: $slot/$fill scope limitations — procedure scope, @scope CSS
 llm-help-sort: 05
 type: text/vnd.tiddlywiki
 
 $slot / $fill Gotchas
 
-1. No colons in slot/fill names
-
-`$name="view:sco"` does NOT match between `$slot` and `$fill`. TW silently fails — no error, just falls back to default content.
-
-```
-<!-- BROKEN — colon breaks matching -->
-<$slot $name="view:sco"/>  +  <$fill $name="view:sco">
-
-<!-- CORRECT — use hyphens -->
-<$slot $name="view-sco"/>  +  <$fill $name="view-sco">
-```
+Colons in slot names (`$name="view:sec"`) work fine — older advice saying otherwise was wrong.
 
 ---
 
-2. $slot inside \procedure does NOT find $fill from outer $transclude $tiddler=
+1. $slot inside \procedure does NOT find $fill from outer $transclude $tiddler=
 
 This is the biggest gotcha. When a consumer transcludes a component tiddler with `$fill` content, `$slot` calls INSIDE a `\procedure` defined in that tiddler cannot find the fills.
 
@@ -54,7 +44,7 @@ Workarounds:
 
 ---
 
-3. @scope CSS is Chrome-only
+2. @scope CSS is Chrome-only
 
 `@scope (.my-class) { ... }` does NOT work in Firefox. Use class-prefixed CSS instead:
 

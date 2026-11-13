@@ -1,5 +1,5 @@
 created: 20260407120000000
-modified: 20260407120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-cascades
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/cascades
@@ -22,7 +22,7 @@ Symptom: your cascade filter works when tested alone but returns empty when run 
 {{{ [<currentTiddler>] :cascade[all[shadows+tiddlers]tag[$:/tags/ViewTemplateBodyFilter]!is[draft]get[text]] }}}
 ```
 
-Known offenders: `flibbles/graph`, `wikilabs`, `EvidentlyCube/AutoComplete` cascade filters have been observed to break the chain in TW 5.3.8.
+Known offenders: `flibbles/graph`, `wikilabs`, `EvidentlyCube/AutoComplete` cascade filters have been observed to break the chain (first seen on TW 5.3.8; still happens on 5.4.x wherever those plugins are installed).
 
 Fix: position your cascade filter FIRST, not last:
 

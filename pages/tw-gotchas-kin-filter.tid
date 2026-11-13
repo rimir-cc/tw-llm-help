@@ -1,5 +1,5 @@
 created: 20260408120000000
-modified: 20260408120000000
+modified: 20261113120000000
 title: $:/plugins/rimir/llm-help/pages/tw-gotchas-kin-filter
 tags: $:/tags/rimir/llm-help/page
 llm-help-path: tw-gotchas/kin-filter
@@ -26,6 +26,11 @@ The `[kin[]]` filter (by bimlas) traverses parent-child trees. Syntax: `[kin:<fi
 ```
 
 Mnemonic: `to` means "titles pointing TO this one via the field" = descendants. `from` means "where this title's field points FROM" = ancestors.
+
+!! 1b. Named operand vs empty operand
+
+* `[kin:parent:from[X]]` — computes X's kin set and INTERSECTS it with the input. With a narrow input (`[[Y]kin:parent:from[X]]`) the result is empty unless Y is in X's set. To enumerate, start from all: `[all[tiddlers]kin:parent:from[X]]`.
+* `[kin:parent:from[]]` (empty operand) — uses the INPUT titles as the starting points: `[[X]kin:parent:from[]]` = X plus its ancestors.
 
 !! 2. The base title is always included in results
 
